@@ -1,0 +1,17 @@
+{
+  "name": "auto-squoosh",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "tsc && node main.js"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/puppeteer": "^2.0.1",
+    "@types/walk": "^2.3.0",
+    "dotenv": "^8.2.0",
+    "puppeteer": "^3.0.0",
+    "typescript": "^3.8.3",
+    "walk": "^2.3.14"
+  }
+}
