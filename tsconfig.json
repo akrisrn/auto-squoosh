@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "CommonJS",
+    "strict": true
+  },
+  "files": [
+    "main.ts"
+  ]
+}
