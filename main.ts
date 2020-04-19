@@ -15,6 +15,7 @@ import * as walk from 'walk';
 });
 
 const host = process.env.HOST!;
+const proxy = process.env.PROXY;
 const inputDir = process.env.INPUT_DIR!;
 const outputDir = process.env.OUTPUT_DIR!;
 
@@ -97,7 +98,11 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
             },
         },
     });
-    const browser = await puppeteer.launch();
+    const args = [];
+    if (proxy) {
+        args.push(`--proxy-server=${proxy}`);
+    }
+    const browser = await puppeteer.launch({ args });
     const images = [];
     for (const filepath of files) {
         images.push(squash(browser, filepath, outputDir));
