@@ -20,8 +20,11 @@ export function loadConfig() {
             });
         }
     });
-    const check = (name: string, value: string | undefined, type: VarType, list: string[] | number[] = []) => {
+    const check = (name: string, value: string | undefined, type: VarType, list: string[] | number[] = [], defaultValue: string = '') => {
         value = value === undefined ? '' : value.trim();
+        if (!value) {
+            value = defaultValue;
+        }
         switch (type) {
             case VarType.notEmpty:
                 if (!value) {
@@ -50,7 +53,11 @@ export function loadConfig() {
                 break;
             case VarType.isList:
                 if (value.indexOf(',') >= 0) {
-                    return value.split(',').map(v => v.trim()).filter(v => v).join();
+                    value = value.split(',').map(v => v.trim()).filter(v => v).join();
+                    if (!value) {
+                        value = defaultValue;
+                    }
+                    return value;
                 }
                 break;
             case VarType.isBool:
@@ -63,22 +70,20 @@ export function loadConfig() {
         }
         return value;
     };
-    const host = check('HOST', process.env.HOST, VarType.notEmpty);
+    const host = check('HOST', process.env.HOST, VarType.notEmpty, [], 'https://squoosh.app/');
     const proxy = check('PROXY', process.env.PROXY, VarType.whatever);
     const inputDir = check('INPUT_DIR', process.env.INPUT_DIR, VarType.notEmpty);
     const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
-    const excludeDirsStr = check('EXCLUDE_DIRS', process.env.EXCLUDE_DIRS, VarType.isList);
-    const excludeDirs = excludeDirsStr ? excludeDirsStr.split(',') : [];
-    const maxParallelStr = check('MAX_PARALLEL', process.env.MAX_PARALLEL, VarType.inRangeOrEmpty, [1, 10]);
-    const maxParallel = maxParallelStr ? parseInt(maxParallelStr, 10) : 5;
-    const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool));
-    const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool));
-    const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool));
-    const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType));
-    const pngEffort = check('PNG_EFFORT', process.env.PNG_EFFORT, VarType.inRangeOrEmpty, [0, 6]);
-    const jpegQuality = check('JPEG_QUALITY', process.env.JPEG_QUALITY, VarType.inRangeOrEmpty, [0, 100]);
-    const webpEffort = check('WEBP_EFFORT', process.env.WEBP_EFFORT, VarType.inRangeOrEmpty, [0, 6]);
-    const webpQuality = check('WEBP_QUALITY', process.env.WEBP_QUALITY, VarType.inRangeOrEmpty, [0, 100]);
+    const excludeDirs = check('EXCLUDE_DIRS', process.env.EXCLUDE_DIRS, VarType.isList, [], '.git,node_modules').split(',');
+    const maxParallel = parseInt(check('MAX_PARALLEL', process.env.MAX_PARALLEL, VarType.inRangeOrEmpty, [1, 10], '5'), 10);
+    const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool, [], 'false'));
+    const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool, [], 'true'));
+    const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool, [], 'false'));
+    const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType), ImageType.jpeg);
+    const pngEffort = check('PNG_EFFORT', process.env.PNG_EFFORT, VarType.inRangeOrEmpty, [0, 6], '2');
+    const jpegQuality = check('JPEG_QUALITY', process.env.JPEG_QUALITY, VarType.inRangeOrEmpty, [0, 100], '75');
+    const webpEffort = check('WEBP_EFFORT', process.env.WEBP_EFFORT, VarType.inRangeOrEmpty, [0, 6], '4');
+    const webpQuality = check('WEBP_QUALITY', process.env.WEBP_QUALITY, VarType.inRangeOrEmpty, [0, 100], '75');
     return {
         host,
         proxy,

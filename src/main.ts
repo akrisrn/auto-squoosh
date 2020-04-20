@@ -29,7 +29,7 @@ async function setOptions(page: Page, filepath: string) {
             selectType = type;
             await page.select(selector.typeSelect, type);
         }
-    } else if (config.allTo && config.allTo !== ImageType.jpeg) {
+    } else if (config.allTo !== ImageType.jpeg) {
         selectType = config.allTo as ImageType;
         await page.select(selector.typeSelect, config.allTo);
     }
@@ -40,26 +40,26 @@ async function setOptions(page: Page, filepath: string) {
     });
     switch (selectType) {
         case ImageType.png:
-            if (config.pngEffort && config.pngEffort !== '2') {
+            if (config.pngEffort !== '2') {
                 await page.evaluateHandle((changeInput, pngEffortInput, pngEffort) => {
                     changeInput(pngEffortInput, pngEffort);
                 }, changeRangeInput, selector.pngEffortInput, config.pngEffort);
             }
             break;
         case ImageType.jpeg:
-            if (config.jpegQuality && config.jpegQuality !== '75') {
+            if (config.jpegQuality !== '75') {
                 await page.evaluateHandle((changeInput, jpegQualityInput, jpegQuality) => {
                     changeInput(jpegQualityInput, jpegQuality);
                 }, changeRangeInput, selector.jpegQualityInput, config.jpegQuality);
             }
             break;
         case ImageType.webp:
-            if (config.webpEffort && config.webpEffort !== '4') {
+            if (config.webpEffort !== '4') {
                 await page.evaluateHandle((changeInput, webpEffortInput, webpEffort) => {
                     changeInput(webpEffortInput, webpEffort);
                 }, changeRangeInput, selector.webpEffortInput, config.webpEffort);
             }
-            if (config.webpQuality && config.webpQuality !== '75') {
+            if (config.webpQuality !== '75') {
                 await page.evaluateHandle((changeInput, webpQualityInput, webpQuality) => {
                     changeInput(webpQualityInput, webpQuality);
                 }, changeRangeInput, selector.webpQualityInput, config.webpQuality);
