@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "compile": "tsc",
-    "start": "node main.js",
-    "devStart": "tsc && node main.js"
+    "start": "node dist/main.js",
+    "devStart": "tsc && node dist/main.js"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
