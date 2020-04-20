@@ -81,7 +81,6 @@ async function writeImage(page: Page, outputDir: string) {
             saving: span ? span.innerText : '',
         };
     }, downloadLink, savingSpan);
-    const blob = await page.goto(url);
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
@@ -93,6 +92,7 @@ async function writeImage(page: Page, outputDir: string) {
         savingMsg = colorize(savingMsg, color.red);
     }
     console.log(colorize(`Writing ${outputPath}${savingMsg}`, color.blue));
+    const blob = await page.goto(url);
     // todo: check if exist
     fs.writeFileSync(outputPath, await blob!.buffer());
 }
