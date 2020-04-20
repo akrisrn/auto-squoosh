@@ -60,7 +60,7 @@ export function loadConfig() {
     const proxy = check('PROXY', process.env.PROXY, VarType.whatever);
     const inputDir = check('INPUT_DIR', process.env.INPUT_DIR, VarType.notEmpty);
     const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
-    const override = Boolean(check('OVERRIDE', process.env.OVERRIDE, VarType.isBool));
+    const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool));
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool));
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool));
     const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType));
@@ -73,7 +73,7 @@ export function loadConfig() {
         proxy,
         inputDir,
         outputDir,
-        override,
+        overwrite,
         followPath,
         followType,
         allTo,

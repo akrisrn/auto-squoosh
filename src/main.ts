@@ -93,7 +93,7 @@ async function writeImage(page: Page, filepath: string, outputDir: string) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
     let outputPath = path.join(outputDir, filename);
-    if (!config.override) {
+    if (!config.overwrite) {
         const extname = path.extname(outputPath);
         const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
         let index = 1;
