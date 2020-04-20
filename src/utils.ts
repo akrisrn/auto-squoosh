@@ -144,7 +144,7 @@ export function colorize(msg: string, color: number) {
     return `\x1B[${color}m${msg}\x1B[0m`;
 }
 
-export function log(msg: string, isError = false) {
+export function log(msg: any, isError = false) {
     console.log(`${colorize(`[${new Date().toISOString()}]`, Color.green)}${isError ? colorize(msg, Color.red) : msg}`);
     if (isError) {
         process.exit(1);
