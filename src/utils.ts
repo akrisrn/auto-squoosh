@@ -21,9 +21,15 @@ export function loadConfig() {
         }
     });
     const host = process.env.HOST!;
-    const proxy = process.env.PROXY;
     const inputDir = process.env.INPUT_DIR!;
     const outputDir = process.env.OUTPUT_DIR!;
+    for (const variable of [host, inputDir, outputDir]) {
+        if (!variable) {
+            console.log(colorize('Missing parameters', Color.red));
+            process.exit(1);
+        }
+    }
+    const proxy = process.env.PROXY;
     const followTypeStr = process.env.FOLLOW_TYPE;
     const followType = !!(followTypeStr && followTypeStr === 'true');
     let allTo = process.env.ALL_TO;
@@ -32,12 +38,6 @@ export function loadConfig() {
     } else if (!Object.values(ImageType).includes(allTo as ImageType)) {
         console.log(colorize('Wrong "ALL_TO" type', Color.red));
         process.exit(1);
-    }
-    for (const variable of [host, inputDir, outputDir]) {
-        if (!variable) {
-            console.log(colorize('Missing parameters', Color.red));
-            process.exit(1);
-        }
     }
     return { host, proxy, inputDir, outputDir, followType, allTo };
 }
