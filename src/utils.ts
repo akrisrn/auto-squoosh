@@ -37,7 +37,40 @@ export function loadConfig() {
             log('Wrong "ALL_TO" type', true);
         }
     }
-    return { host, proxy, inputDir, outputDir, followType, allTo };
+    const checkRange = (name: string, value: string, isQuality = true) => {
+        let num = parseInt(value);
+        if (isNaN(num)) {
+            log(`"${name}" isn't a number`, true);
+        }
+        const min = 0;
+        let max = 100;
+        if (!isQuality) {
+            max = 6;
+        }
+        if (num < min) {
+            num = min;
+        } else if (num > max) {
+            num = max;
+        }
+        return num.toString();
+    };
+    let pngEffort = process.env.PNG_EFFORT;
+    if (pngEffort) {
+        pngEffort = checkRange('PNG_EFFORT', pngEffort, false);
+    }
+    let jpegQuality = process.env.JPEG_QUALITY;
+    if (jpegQuality) {
+        jpegQuality = checkRange('JPEG_QUALITY', jpegQuality);
+    }
+    let webpEffort = process.env.WEBP_EFFORT;
+    if (webpEffort) {
+        webpEffort = checkRange('WEBP_EFFORT', webpEffort, false);
+    }
+    let webpQuality = process.env.WEBP_QUALITY;
+    if (webpQuality) {
+        webpQuality = checkRange('WEBP_QUALITY', webpQuality);
+    }
+    return { host, proxy, inputDir, outputDir, followType, allTo, pngEffort, jpegQuality, webpEffort, webpQuality };
 }
 
 export function getSelector() {
@@ -47,12 +80,20 @@ export function getSelector() {
 
     const selectBtn = 'file-drop p > button';
     const typeSelect = `${optionPanel} > section select`;
+    const pngEffortInput = `${optionPanel} form range-input`;
+    const jpegQualityInput = pngEffortInput;
+    const webpEffortInput = `${optionPanel} form > div > div:first-of-type range-input`;
+    const webpQualityInput = `${optionPanel} form > div > div:nth-of-type(2) range-input`;
     const savingSpan = `${downloadPanel} > div:first-of-type > span > span`;
     const downloadLink = `${downloadPanel} > div:last-of-type > a`;
     const loadingSpinner = `${downloadPanel} loading-spinner`;
     return {
         selectBtn,
         typeSelect,
+        pngEffortInput,
+        jpegQualityInput,
+        webpEffortInput,
+        webpQualityInput,
         savingSpan,
         downloadLink,
         loadingSpinner,
