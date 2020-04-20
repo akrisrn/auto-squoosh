@@ -25,7 +25,7 @@ export function loadConfig() {
     const outputDir = process.env.OUTPUT_DIR!;
     for (const variable of [host, inputDir, outputDir]) {
         if (!variable) {
-            log('Missing parameters', true);
+            log('Missing "HOST", "INPUT_DIR" or "OUTPUT_DIR"', true);
         }
     }
     const proxy = process.env.PROXY;
