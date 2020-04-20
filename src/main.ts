@@ -9,7 +9,7 @@ const config = loadConfig();
 const selector = getSelector();
 
 async function selectImage(page: Page, filepath: string) {
-    console.log(colorize(`Compressing ${filepath}`, Color.cyan));
+    console.log(colorize(`Selecting ${filepath}`, Color.cyan));
     const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
         page.click(selector.selectBtn),
@@ -17,9 +17,10 @@ async function selectImage(page: Page, filepath: string) {
     await fileChooser.accept([filepath]);
 }
 
-async function setOptions(page: Page, extname: string) {
+async function setOptions(page: Page, filepath: string) {
+    console.log(colorize(`Setting options for ${filepath}`, Color.cyan));
     if (config.followType) {
-        const type = extnames[extname];
+        const type = extnames[path.extname(filepath).substr(1)];
         if (type !== ImageType.jpeg) {
             await page.select(selector.typeSelect, type);
         }
@@ -28,7 +29,8 @@ async function setOptions(page: Page, extname: string) {
     }
 }
 
-async function writeImage(page: Page, outputDir: string) {
+async function writeImage(page: Page, filepath: string, outputDir: string) {
+    console.log(colorize(`Compressing ${filepath}`, Color.blue));
     await page.waitForSelector(selector.downloadLink, {
         timeout: 0,
     });
@@ -61,8 +63,8 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
     const page = await browser.newPage();
     await page.goto(config.host);
     await selectImage(page, filepath);
-    await setOptions(page, path.extname(filepath).substr(1));
-    await writeImage(page, outputDir);
+    await setOptions(page, filepath);
+    await writeImage(page, filepath, outputDir);
     await page.close();
 }
 
