@@ -25,8 +25,7 @@ export function loadConfig() {
     const outputDir = process.env.OUTPUT_DIR!;
     for (const variable of [host, inputDir, outputDir]) {
         if (!variable) {
-            console.log(colorize('Missing parameters', Color.red));
-            process.exit(1);
+            log('Missing parameters', true);
         }
     }
     const proxy = process.env.PROXY;
@@ -36,8 +35,7 @@ export function loadConfig() {
     if (!allTo) {
         allTo = ImageType.jpeg;
     } else if (!Object.values(ImageType).includes(allTo as ImageType)) {
-        console.log(colorize('Wrong "ALL_TO" type', Color.red));
-        process.exit(1);
+        log('Wrong "ALL_TO" type', true);
     }
     return { host, proxy, inputDir, outputDir, followType, allTo };
 }
@@ -72,4 +70,11 @@ export function getFiles(inputDir: string) {
 
 export function colorize(msg: string, color: number) {
     return `\x1B[${color}m${msg}\x1B[0m`;
+}
+
+export function log(msg: string, isError = false) {
+    console.log(`${colorize(`[${new Date().toISOString()}]`, Color.green)}${isError ? colorize(msg, Color.red) : msg}`);
+    if (isError) {
+        process.exit(1);
+    }
 }

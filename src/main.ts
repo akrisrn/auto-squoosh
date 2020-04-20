@@ -3,13 +3,13 @@ import { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Color, ImageType } from './enums';
-import { colorize, extnames, getFiles, getSelector, loadConfig } from './utils';
+import { colorize, extnames, getFiles, getSelector, loadConfig, log } from './utils';
 
 const config = loadConfig();
 const selector = getSelector();
 
 async function selectImage(page: Page, filepath: string) {
-    console.log(colorize(`Selecting ${filepath}`, Color.cyan));
+    log(colorize(`Selecting ${filepath}`, Color.cyan));
     const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
         page.click(selector.selectBtn),
@@ -18,7 +18,7 @@ async function selectImage(page: Page, filepath: string) {
 }
 
 async function setOptions(page: Page, filepath: string) {
-    console.log(colorize(`Setting options for ${filepath}`, Color.cyan));
+    log(colorize(`Setting options for ${filepath}`, Color.cyan));
     if (config.followType) {
         const type = extnames[path.extname(filepath).substr(1)];
         if (type !== ImageType.jpeg) {
@@ -30,7 +30,7 @@ async function setOptions(page: Page, filepath: string) {
 }
 
 async function writeImage(page: Page, filepath: string, outputDir: string) {
-    console.log(colorize(`Compressing ${filepath}`, Color.blue));
+    log(colorize(`Compressing ${filepath}`, Color.blue));
     await page.waitForSelector(selector.downloadLink, {
         timeout: 0,
     });
@@ -53,7 +53,7 @@ async function writeImage(page: Page, filepath: string, outputDir: string) {
     } else if (saving.endsWith('bigger')) {
         savingMsg = colorize(savingMsg, Color.red);
     }
-    console.log(colorize(`Writing ${outputPath}${savingMsg}`, Color.blue));
+    log(colorize(`Writing ${outputPath}${savingMsg}`, Color.blue));
     const blob = await page.goto(url);
     // todo: check if exist
     fs.writeFileSync(outputPath, await blob!.buffer());
