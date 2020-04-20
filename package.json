@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "tsc && node main.js"
+    "compile": "tsc",
+    "start": "node main.js",
+    "devStart": "tsc && node main.js"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
