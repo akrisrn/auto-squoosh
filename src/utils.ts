@@ -49,11 +49,13 @@ export function getSelector() {
     const typeSelect = `${optionPanel} > section select`;
     const savingSpan = `${downloadPanel} > div:first-of-type > span > span`;
     const downloadLink = `${downloadPanel} > div:last-of-type > a`;
+    const loadingSpinner = `${downloadPanel} loading-spinner`;
     return {
         selectBtn,
         typeSelect,
         savingSpan,
         downloadLink,
+        loadingSpinner,
     };
 }
 
