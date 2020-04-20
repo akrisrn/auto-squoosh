@@ -2,9 +2,12 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "CommonJS",
-    "strict": true
+    "strict": true,
+    "removeComments": true,
+    "outDir": "dist",
+    "sourceMap": true
   },
-  "files": [
-    "main.ts"
+  "include": [
+    "src/**/*"
   ]
 }
