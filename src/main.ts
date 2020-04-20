@@ -130,7 +130,7 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
     }
     const browser = await puppeteer.launch({ args });
     const images = [];
-    for (const filepath of getFiles(config.inputDir)) {
+    for (const filepath of getFiles(config.inputDir, config.excludeDirs)) {
         images.push(squash(browser, filepath, config.outputDir));
     }
     await Promise.all(images);

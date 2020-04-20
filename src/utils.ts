@@ -48,6 +48,11 @@ export function loadConfig() {
                     return num.toString();
                 }
                 break;
+            case VarType.isList:
+                if (value.indexOf(',') >= 0) {
+                    return value.split(',').map(v => v.trim()).filter(v => v).join();
+                }
+                break;
             case VarType.isBool:
                 if (value !== 'true') {
                     return '';
@@ -62,6 +67,8 @@ export function loadConfig() {
     const proxy = check('PROXY', process.env.PROXY, VarType.whatever);
     const inputDir = check('INPUT_DIR', process.env.INPUT_DIR, VarType.notEmpty);
     const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
+    const excludeDirsStr = check('EXCLUDE_DIRS', process.env.EXCLUDE_DIRS, VarType.isList);
+    const excludeDirs = excludeDirsStr ? excludeDirsStr.split(',') : [];
     const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool));
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool));
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool));
@@ -75,6 +82,7 @@ export function loadConfig() {
         proxy,
         inputDir,
         outputDir,
+        excludeDirs,
         overwrite,
         followPath,
         followType,
@@ -113,7 +121,7 @@ export function getSelector() {
     };
 }
 
-export function getFiles(inputDir: string) {
+export function getFiles(inputDir: string, excludeDirs: string[]) {
     const extnameList = Object.keys(extnames);
     const files: string[] = [];
     walk.walkSync(inputDir, {
@@ -127,6 +135,7 @@ export function getFiles(inputDir: string) {
                 next();
             },
         },
+        filters: excludeDirs,
     });
     return files;
 }

@@ -15,6 +15,7 @@ export enum VarType {
     notEmpty,
     inListOrEmpty,
     inRangeOrEmpty,
+    isList,
     isBool,
     whatever
 }
