@@ -35,6 +35,13 @@ enum imageType {
     webp = 'webp',
 }
 
+enum color {
+    red = 31,
+    green = 32,
+    blue = 34,
+    cyan = 36
+}
+
 const extDict: { [index: string]: imageType } = {
     png: imageType.png,
     jpg: imageType.jpeg,
@@ -43,8 +50,12 @@ const extDict: { [index: string]: imageType } = {
 };
 const extList = Object.keys(extDict);
 
+function colorize(msg: string, color: number) {
+    return `\x1B[${color}m${msg}\x1B[0m`;
+}
+
 async function selectImage(page: Page, filepath: string) {
-    console.log(`Compress ${filepath}`);
+    console.log(colorize(`Compressing ${filepath}`, color.cyan));
     const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
         page.click(selectBtn),
@@ -72,7 +83,7 @@ async function writeImage(page: Page, outputDir: string) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
     const outputPath = path.join(outputDir, filename);
-    console.log(`Write ${outputPath}`);
+    console.log(colorize(`Writing ${outputPath}`, color.blue));
     // todo: check if exist
     fs.writeFileSync(outputPath, await blob!.buffer());
 }
