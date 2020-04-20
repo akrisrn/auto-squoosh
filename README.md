@@ -5,5 +5,7 @@
 - Run:
 
 ```
-yarn && yarn run start
+yarn
+yarn run compile
+yarn run start
 ```
