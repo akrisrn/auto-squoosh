@@ -24,7 +24,7 @@ async function setOptions(page: Page, filepath: string) {
         if (type !== ImageType.jpeg) {
             await page.select(selector.typeSelect, type);
         }
-    } else if (config.allTo !== ImageType.jpeg) {
+    } else if (config.allTo && config.allTo !== ImageType.jpeg) {
         await page.select(selector.typeSelect, config.allTo);
     }
 }

@@ -31,23 +31,30 @@ export function loadConfig() {
     const proxy = process.env.PROXY;
     const followTypeStr = process.env.FOLLOW_TYPE;
     const followType = !!(followTypeStr && followTypeStr === 'true');
-    let allTo = process.env.ALL_TO;
-    if (!allTo) {
-        allTo = ImageType.jpeg;
-    } else if (!Object.values(ImageType).includes(allTo as ImageType)) {
-        log('Wrong "ALL_TO" type', true);
+    const allTo = process.env.ALL_TO;
+    if (allTo) {
+        if (!Object.values(ImageType).includes(allTo as ImageType)) {
+            log('Wrong "ALL_TO" type', true);
+        }
     }
     return { host, proxy, inputDir, outputDir, followType, allTo };
 }
 
 export function getSelector() {
-    const selectBtn = 'file-drop p > button';
     const panel = 'file-drop > div > div:last-of-type';
-    const downloadLink = `${panel} > div:last-of-type > div:last-of-type > a`;
-    const savingSpan = `${panel} > div:last-of-type > div:first-of-type > span > span`;
     const optionPanel = `${panel} > div:first-of-type`;
+    const downloadPanel = `${panel} > div:last-of-type`;
+
+    const selectBtn = 'file-drop p > button';
     const typeSelect = `${optionPanel} > section select`;
-    return { selectBtn, panel, downloadLink, savingSpan, optionPanel, typeSelect };
+    const savingSpan = `${downloadPanel} > div:first-of-type > span > span`;
+    const downloadLink = `${downloadPanel} > div:last-of-type > a`;
+    return {
+        selectBtn,
+        typeSelect,
+        savingSpan,
+        downloadLink,
+    };
 }
 
 export function getFiles(inputDir: string) {
