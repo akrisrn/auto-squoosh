@@ -61,6 +61,7 @@ export function loadConfig() {
     const inputDir = check('INPUT_DIR', process.env.INPUT_DIR, VarType.notEmpty);
     const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
     const override = Boolean(check('OVERRIDE', process.env.OVERRIDE, VarType.isBool));
+    const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool));
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool));
     const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType));
     const pngEffort = check('PNG_EFFORT', process.env.PNG_EFFORT, VarType.inRangeOrEmpty, [0, 6]);
@@ -73,6 +74,7 @@ export function loadConfig() {
         inputDir,
         outputDir,
         override,
+        followPath,
         followType,
         allTo,
         pngEffort,

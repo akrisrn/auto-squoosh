@@ -76,7 +76,7 @@ async function compressImage(page: Page, filepath: string) {
     });
 }
 
-async function writeImage(page: Page, outputDir: string) {
+async function writeImage(page: Page, filepath: string, outputDir: string) {
     const { url, filename, saving } = await page.evaluate((downloadLink, savingSpan) => {
         const a = document.querySelector(downloadLink);
         const span = document.querySelector(savingSpan);
@@ -86,6 +86,9 @@ async function writeImage(page: Page, outputDir: string) {
             saving: span ? span.innerText : '',
         };
     }, selector.downloadLink, selector.savingSpan);
+    if (config.followPath) {
+        outputDir = path.join(outputDir, path.dirname(filepath).substr(path.join(config.inputDir).length));
+    }
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
@@ -116,7 +119,7 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
     await selectImage(page, filepath);
     await setOptions(page, filepath);
     await compressImage(page, filepath);
-    await writeImage(page, outputDir);
+    await writeImage(page, filepath, outputDir);
     await page.close();
 }
 
