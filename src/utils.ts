@@ -35,7 +35,7 @@ export function loadConfig() {
                 break;
             case VarType.inRangeOrEmpty:
                 if (value) {
-                    let num = parseInt(value);
+                    let num = parseInt(value, 10);
                     if (isNaN(num)) {
                         log(`"${name}" isn't a number`, true);
                     }
