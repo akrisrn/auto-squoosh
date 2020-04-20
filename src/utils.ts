@@ -21,7 +21,7 @@ export function loadConfig() {
         }
     });
     const check = (name: string, value: string | undefined, type: VarType, list: string[] | number[] = []) => {
-        if (value === undefined) value = '';
+        value = value === undefined ? '' : value.trim();
         switch (type) {
             case VarType.notEmpty:
                 if (!value) {
@@ -49,7 +49,9 @@ export function loadConfig() {
                 }
                 break;
             case VarType.isBool:
-                if (value !== 'true') return '';
+                if (value !== 'true') {
+                    return '';
+                }
                 break;
             case VarType.whatever:
                 break;
