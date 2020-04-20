@@ -44,6 +44,7 @@ const extDict: { [index: string]: imageType } = {
 const extList = Object.keys(extDict);
 
 async function selectImage(page: Page, filepath: string) {
+    console.log(`Compress ${filepath}`);
     const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
         page.click(selectBtn),
@@ -71,6 +72,7 @@ async function writeImage(page: Page, outputDir: string) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
     const outputPath = path.join(outputDir, filename);
+    console.log(`Write ${outputPath}`);
     // todo: check if exist
     fs.writeFileSync(outputPath, await blob!.buffer());
 }
