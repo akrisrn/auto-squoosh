@@ -60,13 +60,26 @@ export function loadConfig() {
     const proxy = check('PROXY', process.env.PROXY, VarType.whatever);
     const inputDir = check('INPUT_DIR', process.env.INPUT_DIR, VarType.notEmpty);
     const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
+    const override = Boolean(check('OVERRIDE', process.env.OVERRIDE, VarType.isBool));
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool));
     const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType));
     const pngEffort = check('PNG_EFFORT', process.env.PNG_EFFORT, VarType.inRangeOrEmpty, [0, 6]);
     const jpegQuality = check('JPEG_QUALITY', process.env.JPEG_QUALITY, VarType.inRangeOrEmpty, [0, 100]);
     const webpEffort = check('WEBP_EFFORT', process.env.WEBP_EFFORT, VarType.inRangeOrEmpty, [0, 6]);
     const webpQuality = check('WEBP_QUALITY', process.env.WEBP_QUALITY, VarType.inRangeOrEmpty, [0, 100]);
-    return { host, proxy, inputDir, outputDir, followType, allTo, pngEffort, jpegQuality, webpEffort, webpQuality };
+    return {
+        host,
+        proxy,
+        inputDir,
+        outputDir,
+        override,
+        followType,
+        allTo,
+        pngEffort,
+        jpegQuality,
+        webpEffort,
+        webpQuality,
+    };
 }
 
 export function getSelector() {

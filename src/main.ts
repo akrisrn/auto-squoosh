@@ -89,7 +89,16 @@ async function writeImage(page: Page, outputDir: string) {
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
-    const outputPath = path.join(outputDir, filename);
+    let outputPath = path.join(outputDir, filename);
+    if (!config.override) {
+        const extname = path.extname(outputPath);
+        const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
+        let index = 1;
+        while (fs.existsSync(outputPath)) {
+            outputPath = `${pathNoExt} (${index})${extname}`;
+            index += 1;
+        }
+    }
     let savingMsg = saving && ` (${saving})`;
     if (saving.endsWith('smaller')) {
         savingMsg = colorize(savingMsg, Color.green);
@@ -98,7 +107,6 @@ async function writeImage(page: Page, outputDir: string) {
     }
     log(colorize(`Writing ${outputPath}${savingMsg}`, Color.blue));
     const blob = await page.goto(url);
-    // todo: check if exist
     fs.writeFileSync(outputPath, await blob!.buffer());
 }
 
