@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
-import { imageType } from './enums';
+import { ImageType } from './enums';
 import * as walk from 'walk';
 import * as path from 'path';
 
-export const extnames: { [index: string]: imageType } = {
-    png: imageType.png,
-    jpg: imageType.jpeg,
-    jpeg: imageType.jpeg,
-    webp: imageType.webp,
+export const extnames: { [index: string]: ImageType } = {
+    png: ImageType.png,
+    jpg: ImageType.jpeg,
+    jpeg: ImageType.jpeg,
+    webp: ImageType.webp,
 };
 
 export function loadConfig() {

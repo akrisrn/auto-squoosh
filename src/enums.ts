@@ -1,10 +1,10 @@
-export enum imageType {
+export enum ImageType {
     png = 'png',
     jpeg = 'mozjpeg',
     webp = 'webp',
 }
 
-export enum color {
+export enum Color {
     red = 31,
     green = 32,
     blue = 34,

@@ -2,14 +2,14 @@ import * as puppeteer from 'puppeteer';
 import { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
-import { color } from './enums';
+import { Color } from './enums';
 import { colorize, extnames, getFiles, getSelector, loadConfig } from './utils';
 
 const config = loadConfig();
 const selector = getSelector();
 
 async function selectImage(page: Page, filepath: string) {
-    console.log(colorize(`Compressing ${filepath}`, color.cyan));
+    console.log(colorize(`Compressing ${filepath}`, Color.cyan));
     const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
         page.click(selector.selectBtn),
@@ -40,11 +40,11 @@ async function writeImage(page: Page, outputDir: string) {
     const outputPath = path.join(outputDir, filename);
     let savingMsg = saving && ` (${saving})`;
     if (saving.endsWith('smaller')) {
-        savingMsg = colorize(savingMsg, color.green);
+        savingMsg = colorize(savingMsg, Color.green);
     } else if (saving.endsWith('bigger')) {
-        savingMsg = colorize(savingMsg, color.red);
+        savingMsg = colorize(savingMsg, Color.red);
     }
-    console.log(colorize(`Writing ${outputPath}${savingMsg}`, color.blue));
+    console.log(colorize(`Writing ${outputPath}${savingMsg}`, Color.blue));
     const blob = await page.goto(url);
     // todo: check if exist
     fs.writeFileSync(outputPath, await blob!.buffer());
