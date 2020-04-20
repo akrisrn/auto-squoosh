@@ -18,6 +18,7 @@ yarn run start
 | PROXY | `''` | http proxy url |
 | INPUT_DIR | `''` | where contain the image to compress |
 | OUTPUT_DIR | `''` | where the compressed image to place |
+| EXCLUDE_DIRS | `.git,node_modules` | directories with these keys will be skipped, split by `,` |
 | OVERWRITE | `false` | new image will replace the old one if set `true` |
 | FOLLOW_PATH | `true` | new image's path will like the original if set `true` |
 | FOLLOW_TYPE | `false` | new image's type will same as the original if set `true` |
