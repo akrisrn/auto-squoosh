@@ -29,11 +29,18 @@ async function setOptions(page: Page, filepath: string) {
     }
 }
 
-async function writeImage(page: Page, filepath: string, outputDir: string) {
+async function compressImage(page: Page, filepath: string) {
     log(colorize(`Compressing ${filepath}`, Color.blue));
     await page.waitForSelector(selector.downloadLink, {
         timeout: 0,
     });
+    await page.waitForSelector(selector.loadingSpinner, {
+        hidden: true,
+        timeout: 0,
+    });
+}
+
+async function writeImage(page: Page, outputDir: string) {
     const { url, filename, saving } = await page.evaluate((downloadLink, savingSpan) => {
         const a = document.querySelector(downloadLink);
         const span = document.querySelector(savingSpan);
@@ -64,7 +71,8 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
     await page.goto(config.host);
     await selectImage(page, filepath);
     await setOptions(page, filepath);
-    await writeImage(page, filepath, outputDir);
+    await compressImage(page, filepath);
+    await writeImage(page, outputDir);
     await page.close();
 }
 
