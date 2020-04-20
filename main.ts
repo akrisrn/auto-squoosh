@@ -26,6 +26,7 @@ for (const variable of [host, inputDir, outputDir]) {
 const selectBtn = 'file-drop p > button';
 const panel = 'file-drop > div > div:last-of-type';
 const downloadLink = `${panel} > div:last-of-type > div:last-of-type > a`;
+const savingSpan = `${panel} > div:last-of-type > div:first-of-type > span > span`;
 const optionPanel = `${panel} > div:first-of-type`;
 const typeSelect = `${optionPanel} > section select`;
 
@@ -71,19 +72,27 @@ async function writeImage(page: Page, outputDir: string) {
     await page.waitForSelector(downloadLink, {
         timeout: 0,
     });
-    const { url, filename } = await page.evaluate(downloadLink => {
+    const { url, filename, saving } = await page.evaluate((downloadLink, savingSpan) => {
         const a = document.querySelector(downloadLink);
+        const span = document.querySelector(savingSpan);
         return {
             url: a.href,
             filename: a.download,
+            saving: span ? span.innerText : '',
         };
-    }, downloadLink);
+    }, downloadLink, savingSpan);
     const blob = await page.goto(url);
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
     const outputPath = path.join(outputDir, filename);
-    console.log(colorize(`Writing ${outputPath}`, color.blue));
+    let savingMsg = saving && ` (${saving})`;
+    if (saving.endsWith('smaller')) {
+        savingMsg = colorize(savingMsg, color.green);
+    } else if (saving.endsWith('bigger')) {
+        savingMsg = colorize(savingMsg, color.red);
+    }
+    console.log(colorize(`Writing ${outputPath}${savingMsg}`, color.blue));
     // todo: check if exist
     fs.writeFileSync(outputPath, await blob!.buffer());
 }
