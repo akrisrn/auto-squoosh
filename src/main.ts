@@ -3,10 +3,13 @@ import { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Color, ImageType } from './enums';
-import { colorize, extnames, getFiles, getSelector, loadConfig, log } from './utils';
+import { colorize, extnames, getFiles, getSelector, loadConfig, log, sleep } from './utils';
+import * as AsyncLock from 'async-lock';
 
 const config = loadConfig();
 const selector = getSelector();
+const lock = new AsyncLock();
+let pageCount = 0;
 
 async function selectImage(page: Page, filepath: string) {
     log(colorize(`Selecting ${filepath}`, Color.cyan));
@@ -114,6 +117,13 @@ async function writeImage(page: Page, filepath: string, outputDir: string) {
 }
 
 async function squash(browser: Browser, filepath: string, outputDir: string) {
+    await lock.acquire('key', async () => {
+        pageCount += 1;
+        while (pageCount === config.maxParallel + 1) {
+            log(colorize('Sleeping', Color.green));
+            await sleep(1000);
+        }
+    });
     const page = await browser.newPage();
     await page.goto(config.host);
     await selectImage(page, filepath);
@@ -121,6 +131,7 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
     await compressImage(page, filepath);
     await writeImage(page, filepath, outputDir);
     await page.close();
+    pageCount -= 1;
 }
 
 (async () => {

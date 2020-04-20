@@ -69,6 +69,8 @@ export function loadConfig() {
     const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
     const excludeDirsStr = check('EXCLUDE_DIRS', process.env.EXCLUDE_DIRS, VarType.isList);
     const excludeDirs = excludeDirsStr ? excludeDirsStr.split(',') : [];
+    const maxParallelStr = check('MAX_PARALLEL', process.env.MAX_PARALLEL, VarType.inRangeOrEmpty, [1, 10]);
+    const maxParallel = maxParallelStr ? parseInt(maxParallelStr, 10) : 5;
     const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool));
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool));
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool));
@@ -83,6 +85,7 @@ export function loadConfig() {
         inputDir,
         outputDir,
         excludeDirs,
+        maxParallel,
         overwrite,
         followPath,
         followType,
@@ -149,4 +152,8 @@ export function log(msg: any, isError = false) {
     if (isError) {
         process.exit(1);
     }
+}
+
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
