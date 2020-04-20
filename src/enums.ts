@@ -10,3 +10,11 @@ export enum Color {
     blue = 34,
     cyan = 36
 }
+
+export enum VarType {
+    notEmpty,
+    inListOrEmpty,
+    inRangeOrEmpty,
+    isBool,
+    whatever
+}

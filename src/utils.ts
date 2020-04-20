@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
-import { Color, ImageType } from './enums';
+import { Color, ImageType, VarType } from './enums';
 import * as walk from 'walk';
 import * as path from 'path';
 
@@ -20,56 +20,52 @@ export function loadConfig() {
             });
         }
     });
-    const host = process.env.HOST!;
-    const inputDir = process.env.INPUT_DIR!;
-    const outputDir = process.env.OUTPUT_DIR!;
-    for (const variable of [host, inputDir, outputDir]) {
-        if (!variable) {
-            log('Missing "HOST", "INPUT_DIR" or "OUTPUT_DIR"', true);
+    const check = (name: string, value: string | undefined, type: VarType, list: string[] | number[] = []) => {
+        if (value === undefined) value = '';
+        switch (type) {
+            case VarType.notEmpty:
+                if (!value) {
+                    log(`Missing "${name}"`, true);
+                }
+                break;
+            case VarType.inListOrEmpty:
+                if (value && !(list as string[]).includes(value)) {
+                    log(`Wrong "${name}"`, true);
+                }
+                break;
+            case VarType.inRangeOrEmpty:
+                if (value) {
+                    let num = parseInt(value);
+                    if (isNaN(num)) {
+                        log(`"${name}" isn't a number`, true);
+                    }
+                    const [min, max] = list as number[];
+                    if (num < min) {
+                        num = min;
+                    } else if (num > max) {
+                        num = max;
+                    }
+                    return num.toString();
+                }
+                break;
+            case VarType.isBool:
+                if (value !== 'true') return '';
+                break;
+            case VarType.whatever:
+                break;
         }
-    }
-    const proxy = process.env.PROXY;
-    const followTypeStr = process.env.FOLLOW_TYPE;
-    const followType = !!(followTypeStr && followTypeStr === 'true');
-    const allTo = process.env.ALL_TO;
-    if (allTo) {
-        if (!Object.values(ImageType).includes(allTo as ImageType)) {
-            log('Wrong "ALL_TO" type', true);
-        }
-    }
-    const checkRange = (name: string, value: string, isQuality = true) => {
-        let num = parseInt(value);
-        if (isNaN(num)) {
-            log(`"${name}" isn't a number`, true);
-        }
-        const min = 0;
-        let max = 100;
-        if (!isQuality) {
-            max = 6;
-        }
-        if (num < min) {
-            num = min;
-        } else if (num > max) {
-            num = max;
-        }
-        return num.toString();
+        return value;
     };
-    let pngEffort = process.env.PNG_EFFORT;
-    if (pngEffort) {
-        pngEffort = checkRange('PNG_EFFORT', pngEffort, false);
-    }
-    let jpegQuality = process.env.JPEG_QUALITY;
-    if (jpegQuality) {
-        jpegQuality = checkRange('JPEG_QUALITY', jpegQuality);
-    }
-    let webpEffort = process.env.WEBP_EFFORT;
-    if (webpEffort) {
-        webpEffort = checkRange('WEBP_EFFORT', webpEffort, false);
-    }
-    let webpQuality = process.env.WEBP_QUALITY;
-    if (webpQuality) {
-        webpQuality = checkRange('WEBP_QUALITY', webpQuality);
-    }
+    const host = check('HOST', process.env.HOST, VarType.notEmpty);
+    const proxy = check('PROXY', process.env.PROXY, VarType.whatever);
+    const inputDir = check('INPUT_DIR', process.env.INPUT_DIR, VarType.notEmpty);
+    const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
+    const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool));
+    const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType));
+    const pngEffort = check('PNG_EFFORT', process.env.PNG_EFFORT, VarType.inRangeOrEmpty, [0, 6]);
+    const jpegQuality = check('JPEG_QUALITY', process.env.JPEG_QUALITY, VarType.inRangeOrEmpty, [0, 100]);
+    const webpEffort = check('WEBP_EFFORT', process.env.WEBP_EFFORT, VarType.inRangeOrEmpty, [0, 6]);
+    const webpQuality = check('WEBP_QUALITY', process.env.WEBP_QUALITY, VarType.inRangeOrEmpty, [0, 100]);
     return { host, proxy, inputDir, outputDir, followType, allTo, pngEffort, jpegQuality, webpEffort, webpQuality };
 }
 
