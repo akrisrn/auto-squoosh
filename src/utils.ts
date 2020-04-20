@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
-import { ImageType } from './enums';
+import { Color, ImageType } from './enums';
 import * as walk from 'walk';
 import * as path from 'path';
 
@@ -24,13 +24,22 @@ export function loadConfig() {
     const proxy = process.env.PROXY;
     const inputDir = process.env.INPUT_DIR!;
     const outputDir = process.env.OUTPUT_DIR!;
+    const followTypeStr = process.env.FOLLOW_TYPE;
+    const followType = !!(followTypeStr && followTypeStr === 'true');
+    let allTo = process.env.ALL_TO;
+    if (!allTo) {
+        allTo = ImageType.jpeg;
+    } else if (!Object.values(ImageType).includes(allTo as ImageType)) {
+        console.log(colorize('Wrong "ALL_TO" type', Color.red));
+        process.exit(1);
+    }
     for (const variable of [host, inputDir, outputDir]) {
         if (!variable) {
             console.log(colorize('Missing parameters', Color.red));
             process.exit(1);
         }
     }
-    return { host, proxy, inputDir, outputDir };
+    return { host, proxy, inputDir, outputDir, followType, allTo };
 }
 
 export function getSelector() {

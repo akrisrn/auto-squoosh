@@ -2,7 +2,7 @@ import * as puppeteer from 'puppeteer';
 import { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Color } from './enums';
+import { Color, ImageType } from './enums';
 import { colorize, extnames, getFiles, getSelector, loadConfig } from './utils';
 
 const config = loadConfig();
@@ -18,7 +18,14 @@ async function selectImage(page: Page, filepath: string) {
 }
 
 async function setOptions(page: Page, extname: string) {
-    await page.select(selector.typeSelect, extnames[extname]);
+    if (config.followType) {
+        const type = extnames[extname];
+        if (type !== ImageType.jpeg) {
+            await page.select(selector.typeSelect, type);
+        }
+    } else if (config.allTo !== ImageType.jpeg) {
+        await page.select(selector.typeSelect, config.allTo);
+    }
 }
 
 async function writeImage(page: Page, outputDir: string) {
