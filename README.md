@@ -28,3 +28,6 @@ yarn run start
 | JPEG_QUALITY | `'75'` | `0 ~ 100` |
 | WEBP_EFFORT | `'4'` | `0 ~ 6` |
 | WEBP_QUALITY | `'75'` | `0 ~ 100` |
+| RESIZE_WIDTH | `''` | `1 ~ 10000`, the width of new image |
+| SCALE_UP | `'false'` | new image's width will not exceed the original if set `'false'`, only available if `RESIZE_WIDTH` isn't `''` |
+| RESIZE_PRESET | `'1'` | `'0.25' \|\| '0.3333' \|\| '0.5' \|\| '1' \|\| '2' \|\| '3' \|\| '4'`, the scale of new image, only available if `RESIZE_WIDTH` is `''` |
