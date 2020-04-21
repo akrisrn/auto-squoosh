@@ -4,6 +4,17 @@ export enum ImageType {
     webp = 'webp',
 }
 
+export enum ResizePreset {
+    // noinspection JSUnusedGlobalSymbols
+    '25%' = '0.25',
+    '33.33%' = '0.3333',
+    '50%' = '0.5',
+    '100%' = '1',
+    '200%' = '2',
+    '300%' = '3',
+    '400%' = '4',
+}
+
 export enum Color {
     red = 31,
     green = 32,

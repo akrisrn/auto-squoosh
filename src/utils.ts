@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
-import { Color, ImageType, VarType } from './enums';
+import { Color, ImageType, ResizePreset, VarType } from './enums';
 import * as walk from 'walk';
 import * as path from 'path';
 
@@ -84,6 +84,9 @@ export function loadConfig() {
     const jpegQuality = check('JPEG_QUALITY', process.env.JPEG_QUALITY, VarType.inRangeOrEmpty, [0, 100], '75');
     const webpEffort = check('WEBP_EFFORT', process.env.WEBP_EFFORT, VarType.inRangeOrEmpty, [0, 6], '4');
     const webpQuality = check('WEBP_QUALITY', process.env.WEBP_QUALITY, VarType.inRangeOrEmpty, [0, 100], '75');
+    const resizeWidth = check('RESIZE_WIDTH', process.env.RESIZE_WIDTH, VarType.inRangeOrEmpty, [1, 10000]);
+    const scaleUp = Boolean(check('SCALE_UP', process.env.SCALE_UP, VarType.isBool, [], 'false'));
+    const resizePreset = check('RESIZE_PRESET', process.env.RESIZE_PRESET, VarType.inListOrEmpty, Object.values(ResizePreset), ResizePreset['100%']);
     return {
         host,
         proxy,
@@ -99,16 +102,24 @@ export function loadConfig() {
         jpegQuality,
         webpEffort,
         webpQuality,
+        resizeWidth,
+        scaleUp,
+        resizePreset,
     };
 }
 
 export function getSelector() {
     const rightDiv = 'file-drop > div > div:last-of-type';
     const optionDiv = `${rightDiv} > div:first-of-type`;
+    const editDiv = `${optionDiv} > div:first-of-type > div`;
+    const resizeForm = `${editDiv} > div:first-of-type > form`;
     const compressForm = `${optionDiv} > div:last-of-type > form`;
     const downloadDiv = `${rightDiv} > div:last-of-type`;
 
     const selectBtn = 'file-drop p > button';
+    const resizeLabel = `${editDiv} > label:first-of-type`;
+    const resizePresetSelect = `${resizeForm} > label:nth-of-type(2) select`;
+    const resizeWidthInput = `${resizeForm} > label:nth-of-type(3) > input`;
     const typeSelect = `${optionDiv} > section select`;
     const pngEffortInput = `${compressForm} range-input`;
     const jpegQualityInput = pngEffortInput;
@@ -119,6 +130,9 @@ export function getSelector() {
     const loadingSpinner = `${downloadDiv} loading-spinner`;
     return {
         selectBtn,
+        resizeLabel,
+        resizePresetSelect,
+        resizeWidthInput,
         typeSelect,
         pngEffortInput,
         jpegQualityInput,

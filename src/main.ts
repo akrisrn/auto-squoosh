@@ -2,7 +2,7 @@ import * as puppeteer from 'puppeteer';
 import { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Color, ImageType } from './enums';
+import { Color, ImageType, ResizePreset } from './enums';
 import { colorize, extnames, getFiles, getSelector, loadConfig, log, sleep } from './utils';
 import * as AsyncLock from 'async-lock';
 
@@ -65,6 +65,21 @@ async function setOptions(page: Page, filepath: string) {
                 }, changeInput, selector.webpQualityInput, config.webpQuality);
             }
             break;
+    }
+    if (config.resizeWidth) {
+        await (await page.$(selector.resizeLabel))!.click();
+        await page.evaluate((resizeWidthInput, resizeWidth, scaleUp) => {
+            const input = document.querySelector<HTMLInputElement>(resizeWidthInput)!;
+            if (input.value !== resizeWidth) {
+                if (scaleUp || parseInt(input.value, 10) > parseInt(resizeWidth, 10)) {
+                    input.value = resizeWidth;
+                    input.dispatchEvent(new Event('input'));
+                }
+            }
+        }, selector.resizeWidthInput, config.resizeWidth, config.scaleUp);
+    } else if (config.resizePreset !== ResizePreset['100%']) {
+        await (await page.$(selector.resizeLabel))!.click();
+        await page.select(selector.resizePresetSelect, config.resizePreset);
     }
 }
 
