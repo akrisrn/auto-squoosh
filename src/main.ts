@@ -95,13 +95,14 @@ async function compressImage(page: Page, filepath: string) {
 }
 
 async function writeImage(page: Page, filepath: string, outputDir: string) {
-    const { url, filename, saving } = await page.evaluate((downloadLink, savingSpan) => {
-        const a = document.querySelector(downloadLink);
-        const span = document.querySelector(savingSpan);
+    const { url, filename, size, saving } = await page.evaluate((downloadLink, savingSpan) => {
+        const a = document.querySelector<HTMLLinkElement>(downloadLink)!;
+        const span = document.querySelector<HTMLSpanElement>(savingSpan)!;
         return {
             url: a.href,
-            filename: a.download,
-            saving: span ? span.innerText : '',
+            filename: (a as any).download as string,
+            size: span.previousSibling!.textContent!.trim(),
+            saving: span.innerText,
         };
     }, selector.downloadLink, selector.savingSpan);
     if (config.followPath) {
@@ -122,13 +123,13 @@ async function writeImage(page: Page, filepath: string, outputDir: string) {
             index += 1;
         } while (fs.existsSync(outputPath));
     }
-    let savingMsg = saving && ` (${saving})`;
+    let savingMsg = `(${size} ${saving})`;
     if (saving.endsWith('smaller')) {
         savingMsg = colorize(savingMsg, Color.green);
-    } else if (saving.endsWith('bigger')) {
+    } else {
         savingMsg = colorize(savingMsg, Color.red);
     }
-    log(colorize(`Writing ${outputPath}${savingMsg}`, Color.blue));
+    log(colorize(`Writing ${outputPath} ${savingMsg}`, Color.blue));
     const blob = await page.goto(url);
     fs.writeFileSync(outputPath, await blob!.buffer());
 }
