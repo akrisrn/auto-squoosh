@@ -67,18 +67,19 @@ async function setOptions(page: Page, filepath: string) {
             break;
     }
     if (config.resizeWidth) {
-        await (await page.$(selector.resizeLabel))!.click();
-        await page.evaluate((resizeWidthInput, resizeWidth, scaleUp) => {
-            const input = document.querySelector<HTMLInputElement>(resizeWidthInput)!;
-            if (input.value !== resizeWidth) {
+        const width = await page.evaluate(canvas => document.querySelector(canvas).width, selector.canvas);
+        if (config.resizeWidth !== width.toString()) {
+            await page.click(selector.resizeLabel);
+            await page.evaluate((resizeWidthInput, resizeWidth, scaleUp) => {
+                const input = document.querySelector<HTMLInputElement>(resizeWidthInput)!;
                 if (scaleUp || parseInt(input.value, 10) > parseInt(resizeWidth, 10)) {
                     input.value = resizeWidth;
                     input.dispatchEvent(new Event('input'));
                 }
-            }
-        }, selector.resizeWidthInput, config.resizeWidth, config.scaleUp);
+            }, selector.resizeWidthInput, config.resizeWidth, config.scaleUp);
+        }
     } else if (config.resizePreset !== ResizePreset['100%']) {
-        await (await page.$(selector.resizeLabel))!.click();
+        await page.click(selector.resizeLabel);
         await page.select(selector.resizePresetSelect, config.resizePreset);
     }
 }
