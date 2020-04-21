@@ -19,7 +19,7 @@ yarn run start
 | INPUT_DIR | `''` | where contain the image to compress |
 | OUTPUT_DIR | `''` | where the compressed image to place |
 | EXCLUDE_DIRS | `'.git,node_modules'` | directories with these keys will be skipped, split by `,` |
-| MAX_PARALLEL | `'5'` | `0 ~ 10`, the max number of chromium pages created at a time |
+| MAX_PARALLEL | `'5'` | `0 ~ 10`, the max number of Chromium pages created at a time |
 | OVERWRITE | `'false'` | new image will replace the old one if set to `'true'` |
 | FOLLOW_PATH | `'true'` | new image path will like the original if set to `'true'` |
 | FOLLOW_TYPE | `'false'` | new image type will same as the original if set to `'true'` |
