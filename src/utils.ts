@@ -28,19 +28,19 @@ export function loadConfig() {
         switch (type) {
             case VarType.notEmpty:
                 if (!value) {
-                    log(`Missing "${name}"`, true);
+                    error(`Missing "${name}"`);
                 }
                 break;
             case VarType.inListOrEmpty:
                 if (value && !(list as string[]).includes(value)) {
-                    log(`Wrong "${name}"`, true);
+                    error(`Wrong "${name}"`);
                 }
                 break;
             case VarType.inRangeOrEmpty:
                 if (value) {
                     let num = parseInt(value, 10);
                     if (isNaN(num)) {
-                        log(`"${name}" isn't a number`, true);
+                        error(`"${name}" isn't a number`);
                     }
                     const [min, max] = list as number[];
                     if (num < min) {
@@ -152,11 +152,13 @@ export function colorize(msg: string, color: number) {
     return `\x1B[${color}m${msg}\x1B[0m`;
 }
 
-export function log(msg: any, isError = false) {
-    console.log(`${colorize(`[${new Date().toISOString()}]`, Color.green)}${isError ? colorize(msg, Color.red) : msg}`);
-    if (isError) {
-        process.exit(1);
-    }
+export function log(msg: any) {
+    console.log(`${colorize(`[${new Date().toISOString()}]`, Color.green)}${msg}`);
+}
+
+export function error(msg: any) {
+    log(colorize(msg, Color.red));
+    process.exit(1);
 }
 
 export function sleep(ms: number) {
