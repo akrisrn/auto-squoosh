@@ -103,19 +103,20 @@ export function loadConfig() {
 }
 
 export function getSelector() {
-    const panel = 'file-drop > div > div:last-of-type';
-    const optionPanel = `${panel} > div:first-of-type`;
-    const downloadPanel = `${panel} > div:last-of-type`;
+    const rightDiv = 'file-drop > div > div:last-of-type';
+    const optionDiv = `${rightDiv} > div:first-of-type`;
+    const compressForm = `${optionDiv} > div:last-of-type > form`;
+    const downloadDiv = `${rightDiv} > div:last-of-type`;
 
     const selectBtn = 'file-drop p > button';
-    const typeSelect = `${optionPanel} > section select`;
-    const pngEffortInput = `${optionPanel} form range-input`;
+    const typeSelect = `${optionDiv} > section select`;
+    const pngEffortInput = `${compressForm} range-input`;
     const jpegQualityInput = pngEffortInput;
-    const webpEffortInput = `${optionPanel} form > div > div:first-of-type range-input`;
-    const webpQualityInput = `${optionPanel} form > div > div:nth-of-type(2) range-input`;
-    const savingSpan = `${downloadPanel} > div:first-of-type > span > span`;
-    const downloadLink = `${downloadPanel} > div:last-of-type > a`;
-    const loadingSpinner = `${downloadPanel} loading-spinner`;
+    const webpEffortInput = `${compressForm} > div > div:first-of-type range-input`;
+    const webpQualityInput = `${compressForm} > div > div:nth-of-type(2) range-input`;
+    const savingSpan = `${downloadDiv} > div:first-of-type > span > span`;
+    const downloadLink = `${downloadDiv} > div:last-of-type > a`;
+    const loadingSpinner = `${downloadDiv} loading-spinner`;
     return {
         selectBtn,
         typeSelect,
