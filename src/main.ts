@@ -123,6 +123,7 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
             log(colorize('Sleeping', Color.green));
             await sleep(1000);
         }
+        log(colorize(`Opening new page ${colorize(`(${pageCount} of ${config.maxParallel})`, Color.green)}`, Color.cyan));
     });
     const page = await browser.newPage();
     await page.goto(config.host);
