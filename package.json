@@ -14,6 +14,7 @@
     "@types/walk": "^2.3.0",
     "async-lock": "^1.2.2",
     "dotenv": "^8.2.0",
+    "image-size": "^0.8.3",
     "puppeteer": "^3.0.0",
     "tslint": "^6.1.1",
     "typescript": "^3.8.3",
