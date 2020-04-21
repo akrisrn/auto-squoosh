@@ -21,7 +21,7 @@ yarn run start
 | EXCLUDE_DIRS | `'.git,node_modules'` | directories with these keys will be skipped, split by `,` |
 | MAX_PARALLEL | `'5'` | `0 ~ 10`, the max number of Chromium pages created at a time |
 | OVERWRITE | `'false'` | new image will replace the old one if set to `'true'` |
-| ABORT_BIGGER | `'false'` | new image will not be write when size increased if set to `'true'`, only available if `OVERWRITE` is set to `'true'` |
+| ABORT_BIGGER | `'false'` | new image will not overwrite when size increased if set to `'true'`, only available if `OVERWRITE` is set to `'true'` |
 | FOLLOW_PATH | `'true'` | new image path will like the original if set to `'true'` |
 | FOLLOW_TYPE | `'false'` | new image type will same as the original if set to `'true'` |
 | ALL_TO | `'mozjpeg'` | `'png' \|\| 'mozjpeg' \|\| 'webp'`, all images will compress to that specified type, only available if `FOLLOW_TYPE` is set to `'false'` |
