@@ -33,36 +33,36 @@ async function setOptions(page: Page, filepath: string) {
         selectType = config.allTo as ImageType;
         await page.select(selector.typeSelect, config.allTo);
     }
-    const changeRangeInput = await page.evaluateHandle(() => (inputSelector: string, value: string) => {
+    const changeInput = await page.evaluateHandle(() => (inputSelector: string, value: string) => {
         const input = document.querySelector<HTMLInputElement>(inputSelector)!;
         input.value = value;
-        (input as any)._retargetEvent(new Event('input'));
+        input.dispatchEvent(new Event('input'));
     });
     switch (selectType) {
         case ImageType.png:
             if (config.pngEffort !== '2') {
-                await page.evaluateHandle((changeInput, pngEffortInput, pngEffort) => {
-                    changeInput(pngEffortInput, pngEffort);
-                }, changeRangeInput, selector.pngEffortInput, config.pngEffort);
+                await page.evaluateHandle((changeRangeInput, pngEffortInput, pngEffort) => {
+                    changeRangeInput(pngEffortInput, pngEffort);
+                }, changeInput, selector.pngEffortInput, config.pngEffort);
             }
             break;
         case ImageType.jpeg:
             if (config.jpegQuality !== '75') {
-                await page.evaluateHandle((changeInput, jpegQualityInput, jpegQuality) => {
-                    changeInput(jpegQualityInput, jpegQuality);
-                }, changeRangeInput, selector.jpegQualityInput, config.jpegQuality);
+                await page.evaluateHandle((changeRangeInput, jpegQualityInput, jpegQuality) => {
+                    changeRangeInput(jpegQualityInput, jpegQuality);
+                }, changeInput, selector.jpegQualityInput, config.jpegQuality);
             }
             break;
         case ImageType.webp:
             if (config.webpEffort !== '4') {
-                await page.evaluateHandle((changeInput, webpEffortInput, webpEffort) => {
-                    changeInput(webpEffortInput, webpEffort);
-                }, changeRangeInput, selector.webpEffortInput, config.webpEffort);
+                await page.evaluateHandle((changeRangeInput, webpEffortInput, webpEffort) => {
+                    changeRangeInput(webpEffortInput, webpEffort);
+                }, changeInput, selector.webpEffortInput, config.webpEffort);
             }
             if (config.webpQuality !== '75') {
-                await page.evaluateHandle((changeInput, webpQualityInput, webpQuality) => {
-                    changeInput(webpQualityInput, webpQuality);
-                }, changeRangeInput, selector.webpQualityInput, config.webpQuality);
+                await page.evaluateHandle((changeRangeInput, webpQualityInput, webpQuality) => {
+                    changeRangeInput(webpQualityInput, webpQuality);
+                }, changeInput, selector.webpQualityInput, config.webpQuality);
             }
             break;
     }
