@@ -148,7 +148,7 @@ export function getFiles(inputDir: string, excludeDirs: string[]) {
     return files;
 }
 
-export function colorize(msg: string, color: number) {
+export function colorize(msg: string, color: Color) {
     return `\x1B[${color}m${msg}\x1B[0m`;
 }
 

@@ -93,17 +93,19 @@ async function writeImage(page: Page, filepath: string, outputDir: string) {
         outputDir = path.join(outputDir, path.dirname(filepath).substr(path.join(config.inputDir).length));
     }
     if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
+        fs.mkdirSync(outputDir, {
+            recursive: true,
+        });
     }
     let outputPath = path.join(outputDir, filename);
-    if (!config.overwrite) {
+    if (!config.overwrite && fs.existsSync(outputPath)) {
         const extname = path.extname(outputPath);
         const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
         let index = 1;
-        while (fs.existsSync(outputPath)) {
+        do {
             outputPath = `${pathNoExt} (${index})${extname}`;
             index += 1;
-        }
+        } while (fs.existsSync(outputPath));
     }
     let savingMsg = saving && ` (${saving})`;
     if (saving.endsWith('smaller')) {
