@@ -67,16 +67,21 @@ async function setOptions(page: Page, file: ImageFile) {
             break;
     }
     if (config.resizeWidth) {
-        await page.click(selector.resizeLabel);
-        await page.evaluate((resizeWidthInput, resizeWidth, scaleUp) => {
-            const input = document.querySelector<HTMLInputElement>(resizeWidthInput)!;
-            if (input.value !== resizeWidth) {
+        if (config.resizeWidth !== file.width.toString()) {
+            await page.click(selector.resizeLabel);
+            const isChanged = await page.evaluate((resizeWidthInput, resizeWidth, scaleUp) => {
+                const input = document.querySelector<HTMLInputElement>(resizeWidthInput)!;
                 if (scaleUp || parseInt(input.value, 10) > parseInt(resizeWidth, 10)) {
                     input.value = resizeWidth;
                     input.dispatchEvent(new Event('input'));
+                    return true;
                 }
+                return false;
+            }, selector.resizeWidthInput, config.resizeWidth, config.scaleUp);
+            if (!isChanged) {
+                await page.click(selector.resizeLabel);
             }
-        }, selector.resizeWidthInput, config.resizeWidth, config.scaleUp);
+        }
     } else if (config.resizePreset !== ResizePreset['100%']) {
         await page.click(selector.resizeLabel);
         await page.select(selector.resizePresetSelect, config.resizePreset);
