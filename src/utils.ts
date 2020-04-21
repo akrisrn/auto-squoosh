@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import { Color, ImageType, ResizePreset, VarType } from './enums';
 import * as walk from 'walk';
 import * as path from 'path';
+import { imageSize } from 'image-size';
 
 export const extnames: { [index: string]: ImageType } = {
     png: ImageType.png,
@@ -144,23 +145,29 @@ export function getSelector() {
     };
 }
 
-export function getFiles(inputDir: string, excludeDirs: string[]) {
+export function getImageFiles(inputDir: string, excludeDirs: string[]) {
     const extnameList = Object.keys(extnames);
-    const files: string[] = [];
+    const imageFiles: ImageFile[] = [];
     walk.walkSync(inputDir, {
         listeners: {
             file: (root, fileStats, next) => {
                 const filename = fileStats.name;
                 const extname = path.extname(filename).substr(1);
                 if (extnameList.includes(extname)) {
-                    files.push(path.join(root, filename));
+                    const filepath = path.join(root, filename);
+                    const dimensions = imageSize(filepath);
+                    imageFiles.push({
+                        path: filepath,
+                        width: dimensions.width!,
+                        height: dimensions.height!,
+                    });
                 }
                 next();
             },
         },
         filters: excludeDirs,
     });
-    return files;
+    return imageFiles;
 }
 
 export function colorize(msg: string, color: Color) {

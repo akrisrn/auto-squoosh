@@ -3,7 +3,7 @@ import { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Color, ImageType, ResizePreset } from './enums';
-import { colorize, extnames, getFiles, getSelector, loadConfig, log, sleep } from './utils';
+import { colorize, extnames, getImageFiles, getSelector, loadConfig, log, sleep } from './utils';
 import * as AsyncLock from 'async-lock';
 
 const config = loadConfig();
@@ -11,20 +11,20 @@ const selector = getSelector();
 const lock = new AsyncLock();
 let pageCount = 0;
 
-async function selectImage(page: Page, filepath: string) {
-    log(colorize(`Selecting ${filepath}`, Color.cyan));
+async function selectImage(page: Page, file: ImageFile) {
+    log(colorize(`Selecting ${file.path}`, Color.cyan));
     const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
         page.click(selector.selectBtn),
     ]);
-    await fileChooser.accept([filepath]);
+    await fileChooser.accept([file.path]);
 }
 
-async function setOptions(page: Page, filepath: string) {
-    log(colorize(`Setting options for ${filepath}`, Color.cyan));
+async function setOptions(page: Page, file: ImageFile) {
+    log(colorize(`Setting options for ${file.path}`, Color.cyan));
     let selectType = ImageType.jpeg;
     if (config.followType) {
-        const type = extnames[path.extname(filepath).substr(1)];
+        const type = extnames[path.extname(file.path).substr(1)];
         if (type !== ImageType.jpeg) {
             selectType = type;
             await page.select(selector.typeSelect, type);
@@ -83,8 +83,8 @@ async function setOptions(page: Page, filepath: string) {
     }
 }
 
-async function compressImage(page: Page, filepath: string) {
-    log(colorize(`Compressing ${filepath}`, Color.blue));
+async function compressImage(page: Page, file: ImageFile) {
+    log(colorize(`Compressing ${file.path}`, Color.blue));
     await page.waitForSelector(selector.downloadLink, {
         timeout: 0,
     });
@@ -94,7 +94,7 @@ async function compressImage(page: Page, filepath: string) {
     });
 }
 
-async function writeImage(page: Page, filepath: string, outputDir: string) {
+async function writeImage(page: Page, file: ImageFile, outputDir: string) {
     const { url, filename, size, saving } = await page.evaluate((downloadLink, savingSpan) => {
         const a = document.querySelector<HTMLLinkElement>(downloadLink)!;
         const span = document.querySelector<HTMLSpanElement>(savingSpan)!;
@@ -106,7 +106,7 @@ async function writeImage(page: Page, filepath: string, outputDir: string) {
         };
     }, selector.downloadLink, selector.savingSpan);
     if (config.followPath) {
-        outputDir = path.join(outputDir, path.dirname(filepath).substr(path.join(config.inputDir).length));
+        outputDir = path.join(outputDir, path.dirname(file.path).substr(path.join(config.inputDir).length));
     }
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, {
@@ -134,7 +134,7 @@ async function writeImage(page: Page, filepath: string, outputDir: string) {
     fs.writeFileSync(outputPath, await blob!.buffer());
 }
 
-async function squash(browser: Browser, filepath: string, outputDir: string) {
+async function squash(browser: Browser, file: ImageFile, outputDir: string) {
     await lock.acquire('key', async () => {
         pageCount += 1;
         while (pageCount === config.maxParallel + 1) {
@@ -145,10 +145,10 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
     });
     const page = await browser.newPage();
     await page.goto(config.host);
-    await selectImage(page, filepath);
-    await setOptions(page, filepath);
-    await compressImage(page, filepath);
-    await writeImage(page, filepath, outputDir);
+    await selectImage(page, file);
+    await setOptions(page, file);
+    await compressImage(page, file);
+    await writeImage(page, file, outputDir);
     await page.close();
     pageCount -= 1;
 }
@@ -160,8 +160,8 @@ async function squash(browser: Browser, filepath: string, outputDir: string) {
     }
     const browser = await puppeteer.launch({ args });
     const images = [];
-    for (const filepath of getFiles(config.inputDir, config.excludeDirs)) {
-        images.push(squash(browser, filepath, config.outputDir));
+    for (const file of getImageFiles(config.inputDir, config.excludeDirs)) {
+        images.push(squash(browser, file, config.outputDir));
     }
     await Promise.all(images);
     await browser.close();
