@@ -120,7 +120,7 @@ async function writeImage(page: Page, file: ImageFile, outputDir: string) {
     }
     let outputPath = path.join(outputDir, filename);
     if (config.overwrite) {
-        if (saving.endsWith('bigger') && config.abortBigger) {
+        if (saving.endsWith('bigger') && fs.existsSync(outputPath) && config.abortBigger) {
             log(colorize(`Abort write ${outputPath} (${size} ${saving})`, Color.red));
             return;
         }
