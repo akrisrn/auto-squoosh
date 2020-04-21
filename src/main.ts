@@ -119,7 +119,12 @@ async function writeImage(page: Page, file: ImageFile, outputDir: string) {
         });
     }
     let outputPath = path.join(outputDir, filename);
-    if (!config.overwrite && fs.existsSync(outputPath)) {
+    if (config.overwrite) {
+        if (saving.endsWith('bigger') && config.abortBigger) {
+            log(colorize(`Abort write ${outputPath} (${size} ${saving})`, Color.red));
+            return;
+        }
+    } else if (fs.existsSync(outputPath)) {
         const extname = path.extname(outputPath);
         const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
         let index = 1;
