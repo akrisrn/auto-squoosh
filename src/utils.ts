@@ -116,7 +116,6 @@ export function getSelector() {
     const compressForm = `${optionDiv} > div:last-of-type > form`;
     const downloadDiv = `${rightDiv} > div:last-of-type`;
 
-    const canvas = 'canvas';
     const selectBtn = 'file-drop p > button';
     const resizeLabel = `${editDiv} > label:first-of-type`;
     const resizePresetSelect = `${resizeForm} > label:nth-of-type(2) select`;
@@ -130,7 +129,6 @@ export function getSelector() {
     const downloadLink = `${downloadDiv} > div:last-of-type > a`;
     const loadingSpinner = `${downloadDiv} loading-spinner`;
     return {
-        canvas,
         selectBtn,
         resizeLabel,
         resizePresetSelect,
