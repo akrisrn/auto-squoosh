@@ -5,13 +5,6 @@ import * as walk from 'walk';
 import * as path from 'path';
 import { imageSize } from 'image-size';
 
-export const extnames: { [index: string]: ImageType } = {
-    png: ImageType.png,
-    jpg: ImageType.jpeg,
-    jpeg: ImageType.jpeg,
-    webp: ImageType.webp,
-};
-
 export function loadConfig() {
     ['.env', '.env.local'].forEach(filename => {
         if (fs.existsSync(filename)) {
@@ -150,14 +143,12 @@ export function getSelector() {
 }
 
 export function getImageFiles(inputDir: string, excludeDirs: string[]) {
-    const extnameList = Object.keys(extnames);
     const imageFiles: ImageFile[] = [];
     walk.walkSync(inputDir, {
         listeners: {
             file: (root, fileStats, next) => {
                 const filename = fileStats.name;
-                const extname = path.extname(filename).substr(1);
-                if (extnameList.includes(extname)) {
+                if (getFileType(filename)) {
                     const filepath = path.join(root, filename);
                     const dimensions = imageSize(filepath);
                     imageFiles.push({

@@ -3,7 +3,7 @@ import { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Color, ImageType, ResizePreset } from './enums';
-import { colorize, extnames, getImageFiles, getSelector, loadConfig, log, sleep } from './utils';
+import { colorize, getFileType, getImageFiles, getSelector, loadConfig, log, sleep } from './utils';
 import * as AsyncLock from 'async-lock';
 
 const config = loadConfig();
@@ -24,10 +24,10 @@ async function setOptions(page: Page, file: ImageFile) {
     log(colorize(`Setting options for ${file.path}`, Color.cyan));
     let selectType = ImageType.jpeg;
     if (config.followType) {
-        const type = extnames[path.extname(file.path).substr(1)];
-        if (type !== ImageType.jpeg) {
-            selectType = type;
-            await page.select(selector.typeSelect, type);
+        const fileType = getFileType(file.path)!;
+        if (fileType !== ImageType.jpeg) {
+            selectType = fileType;
+            await page.select(selector.typeSelect, fileType);
         }
     } else if (config.allTo !== ImageType.jpeg) {
         selectType = config.allTo;
