@@ -77,6 +77,8 @@ export function loadConfig() {
     const abortSlight = Boolean(check('ABORT_SLIGHT', process.env.ABORT_SLIGHT, VarType.isBool, [], 'false'));
     const abortBigger = Boolean(check('ABORT_BIGGER', process.env.ABORT_BIGGER, VarType.isBool, [], 'false'));
     const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool, [], 'false'));
+    const furtherAbort = Boolean(check('FURTHER_ABORT', process.env.FURTHER_ABORT, VarType.isBool, [], 'false'));
+    const offsetSize = parseInt(check('OFFSET_SIZE', process.env.OFFSET_SIZE, VarType.inRangeOrEmpty, [1, 100], '1'), 10);
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool, [], 'true'));
     const CUSTOM_RULES = 'CUSTOM_RULES';
     const customRulesStr = check(CUSTOM_RULES, process.env.CUSTOM_RULES, VarType.isList);
@@ -138,6 +140,8 @@ export function loadConfig() {
         abortSlight,
         abortBigger,
         overwrite,
+        furtherAbort,
+        offsetSize,
         followPath,
         customRules,
         pngEffort,

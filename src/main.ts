@@ -99,6 +99,9 @@ async function writeImage(browser: Browser, page: Page, file: ImageFile, outputD
         log(colorize(`Abort write ${filename} (${size} ${saving})`, Color.red));
         return;
     }
+    const newPage = await browser.newPage();
+    const buffer = await (await newPage.goto(url))!.buffer();
+    await newPage.close();
     if (config.followPath) {
         outputDir = path.join(outputDir, path.dirname(file.path).substr(path.join(config.inputDir).length));
     }
@@ -108,14 +111,23 @@ async function writeImage(browser: Browser, page: Page, file: ImageFile, outputD
         });
     }
     let outputPath = path.join(outputDir, filename);
-    if (fs.existsSync(outputPath) && !config.overwrite) {
-        const extname = path.extname(outputPath);
-        const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
-        let index = 1;
-        do {
-            outputPath = `${pathNoExt} (${index})${extname}`;
-            index += 1;
-        } while (fs.existsSync(outputPath));
+    if (fs.existsSync(outputPath)) {
+        if (!config.overwrite) {
+            const extname = path.extname(outputPath);
+            const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
+            let index = 1;
+            do {
+                outputPath = `${pathNoExt} (${index})${extname}`;
+                index += 1;
+            } while (fs.existsSync(outputPath));
+        } else if (config.furtherAbort) {
+            const fileSize = fs.statSync(outputPath).size;
+            const bufferSize = buffer.length;
+            if (bufferSize > fileSize || fileSize - bufferSize <= config.offsetSize * 1024) {
+                log(colorize(`Abort overwrite ${outputPath} because bigger or slightly smaller`, Color.red));
+                return;
+            }
+        }
     }
     let savingMsg = `(${size} ${saving})`;
     if (saving.endsWith('smaller')) {
@@ -124,10 +136,7 @@ async function writeImage(browser: Browser, page: Page, file: ImageFile, outputD
         savingMsg = colorize(savingMsg, Color.red);
     }
     log(colorize(`Writing ${outputPath} ${savingMsg}`, Color.blue));
-    const newPage = await browser.newPage();
-    const blob = await newPage.goto(url);
-    fs.writeFileSync(outputPath, await blob!.buffer());
-    await newPage.close();
+    fs.writeFileSync(outputPath, buffer);
 }
 
 async function squash(browser: Browser, file: ImageFile, outputDir: string) {
