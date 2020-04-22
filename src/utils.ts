@@ -82,14 +82,14 @@ export function loadConfig() {
     const abortBigger = Boolean(check('ABORT_BIGGER', process.env.ABORT_BIGGER, VarType.isBool, [], 'false'));
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool, [], 'true'));
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool, [], 'false'));
-    const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType), ImageType.jpeg);
+    const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType), ImageType.jpeg) as ImageType;
     const pngEffort = check('PNG_EFFORT', process.env.PNG_EFFORT, VarType.inRangeOrEmpty, [0, 6], '2');
     const jpegQuality = check('JPEG_QUALITY', process.env.JPEG_QUALITY, VarType.inRangeOrEmpty, [0, 100], '75');
     const webpEffort = check('WEBP_EFFORT', process.env.WEBP_EFFORT, VarType.inRangeOrEmpty, [0, 6], '4');
     const webpQuality = check('WEBP_QUALITY', process.env.WEBP_QUALITY, VarType.inRangeOrEmpty, [0, 100], '75');
     const resizeWidth = check('RESIZE_WIDTH', process.env.RESIZE_WIDTH, VarType.inRangeOrEmpty, [1, 10000]);
     const scaleUp = Boolean(check('SCALE_UP', process.env.SCALE_UP, VarType.isBool, [], 'false'));
-    const resizePreset = check('RESIZE_PRESET', process.env.RESIZE_PRESET, VarType.inListOrEmpty, Object.values(ResizePreset), ResizePreset['100%']);
+    const resizePreset = check('RESIZE_PRESET', process.env.RESIZE_PRESET, VarType.inListOrEmpty, Object.values(ResizePreset), ResizePreset['100%']) as ResizePreset;
     return {
         host,
         proxy,

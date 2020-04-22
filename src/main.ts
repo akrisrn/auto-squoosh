@@ -30,7 +30,7 @@ async function setOptions(page: Page, file: ImageFile) {
             await page.select(selector.typeSelect, type);
         }
     } else if (config.allTo !== ImageType.jpeg) {
-        selectType = config.allTo as ImageType;
+        selectType = config.allTo;
         await page.select(selector.typeSelect, config.allTo);
     }
     const changeInput = await page.evaluateHandle(() => (inputSelector: string, value: string) => {
