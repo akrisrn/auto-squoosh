@@ -91,7 +91,7 @@ async function compressImage(page: Page, file: ImageFile) {
     });
 }
 
-async function writeImage(page: Page, file: ImageFile, outputDir: string) {
+async function writeImage(browser: Browser, page: Page, file: ImageFile, outputDir: string) {
     const { url, filename, size, saving } = await page.evaluate((downloadLink, savingSpan) => {
         const a = document.querySelector<HTMLLinkElement>(downloadLink)!;
         const span = document.querySelector<HTMLSpanElement>(savingSpan)!;
@@ -134,8 +134,10 @@ async function writeImage(page: Page, file: ImageFile, outputDir: string) {
         savingMsg = colorize(savingMsg, Color.red);
     }
     log(colorize(`Writing ${outputPath} ${savingMsg}`, Color.blue));
-    const blob = await page.goto(url);
+    const newPage = await browser.newPage();
+    const blob = await newPage.goto(url);
     fs.writeFileSync(outputPath, await blob!.buffer());
+    await newPage.close();
 }
 
 async function squash(browser: Browser, file: ImageFile, outputDir: string) {
@@ -152,7 +154,7 @@ async function squash(browser: Browser, file: ImageFile, outputDir: string) {
     await selectImage(page, file);
     await setOptions(page, file);
     await compressImage(page, file);
-    await writeImage(page, file, outputDir);
+    await writeImage(browser, page, file, outputDir);
     await page.close();
     pageCount -= 1;
 }
