@@ -5,6 +5,7 @@ import * as path from 'path';
 import { Color, ImageType, ResizePreset } from './enums';
 import { colorize, getFileType, getImageFiles, getSelector, loadConfig, log, sleep } from './utils';
 import * as AsyncLock from 'async-lock';
+import { ImageFile } from './d';
 
 const config = loadConfig();
 const selector = getSelector();

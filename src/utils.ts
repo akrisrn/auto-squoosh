@@ -4,6 +4,7 @@ import { Color, ImageType, imageTypes, ResizePreset, VarType } from './enums';
 import * as walk from 'walk';
 import * as path from 'path';
 import { imageSize } from 'image-size';
+import { ImageFile } from './d';
 
 export function loadConfig() {
     ['.env', '.env.local'].forEach(filename => {
