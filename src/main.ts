@@ -114,7 +114,7 @@ async function writeImage(browser: Browser, page: Page, file: ImageFile, outputD
     let outputPath = path.join(outputDir, filename);
     if (fs.existsSync(outputPath)) {
         if (config.overwrite) {
-            if (saving.startsWith('slightly') && config.abortSlight || saving.endsWith('bigger') && config.abortBigger) {
+            if (saving === 'no change' || (saving.startsWith('slightly') && config.abortSlight) || (saving.endsWith('bigger') && config.abortBigger)) {
                 log(colorize(`Abort write ${outputPath} (${size} ${saving})`, Color.red));
                 return;
             }
