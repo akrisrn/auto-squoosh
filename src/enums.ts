@@ -4,6 +4,8 @@ export enum ImageType {
     webp = 'webp',
 }
 
+export const imageTypes = Object.values(ImageType);
+
 export enum ResizePreset {
     // noinspection JSUnusedGlobalSymbols
     '25%' = '0.25',

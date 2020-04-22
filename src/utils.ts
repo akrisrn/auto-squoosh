@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
-import { Color, ImageType, ResizePreset, VarType } from './enums';
+import { Color, ImageType, imageTypes, ResizePreset, VarType } from './enums';
 import * as walk from 'walk';
 import * as path from 'path';
 import { imageSize } from 'image-size';
@@ -75,7 +75,7 @@ export function loadConfig() {
     const abortBigger = Boolean(check('ABORT_BIGGER', process.env.ABORT_BIGGER, VarType.isBool, [], 'false'));
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool, [], 'true'));
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool, [], 'false'));
-    const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, Object.values(ImageType), ImageType.jpeg) as ImageType;
+    const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, imageTypes, ImageType.jpeg) as ImageType;
     const pngEffort = check('PNG_EFFORT', process.env.PNG_EFFORT, VarType.inRangeOrEmpty, [0, 6], '2');
     const jpegQuality = check('JPEG_QUALITY', process.env.JPEG_QUALITY, VarType.inRangeOrEmpty, [0, 100], '75');
     const webpEffort = check('WEBP_EFFORT', process.env.WEBP_EFFORT, VarType.inRangeOrEmpty, [0, 6], '4');
