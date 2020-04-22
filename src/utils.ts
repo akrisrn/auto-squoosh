@@ -4,7 +4,10 @@ import { Color, ImageType, imageTypes, ResizePreset, VarType } from './enums';
 import * as walk from 'walk';
 import * as path from 'path';
 import { imageSize } from 'image-size';
-import { ImageFile } from './d';
+import { CustomRule, ImageFile } from './d';
+
+let allowAllType = false;
+const allowedTypes: ImageType[] = [];
 
 export function loadConfig() {
     ['.env', '.env.local'].forEach(filename => {
@@ -75,8 +78,49 @@ export function loadConfig() {
     const abortSlight = Boolean(check('ABORT_SLIGHT', process.env.ABORT_SLIGHT, VarType.isBool, [], 'false'));
     const abortBigger = Boolean(check('ABORT_BIGGER', process.env.ABORT_BIGGER, VarType.isBool, [], 'false'));
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool, [], 'true'));
+    const CUSTOM_RULES = 'CUSTOM_RULES';
+    const customRulesStr = check(CUSTOM_RULES, process.env.CUSTOM_RULES, VarType.isList);
+    const sep = '->';
+    const customRules = customRulesStr ? [...new Set(customRulesStr.split(',').map(rule => {
+        const customRule = [];
+        const indexOf = rule.indexOf(sep);
+        if (indexOf >= 0 && indexOf === rule.lastIndexOf(sep)) {
+            const [inputType, outputType] = rule.split(sep).map(type => type.trim());
+            check(`input type of ${CUSTOM_RULES}`, inputType, VarType.inListOrEmpty, imageTypes);
+            check(`output type of ${CUSTOM_RULES}`, outputType, VarType.inListOrEmpty, imageTypes);
+            if (!inputType) {
+                if (allowAllType) {
+                    error(`Only allow to omit input type once in "${CUSTOM_RULES}"`);
+                }
+                allowAllType = true;
+            } else if (!allowedTypes.includes(inputType as ImageType)) {
+                allowedTypes.push(inputType as ImageType);
+            }
+            customRule.push(inputType);
+            customRule.push(outputType ? outputType : ImageType.jpeg);
+        } else {
+            error(`Wrong "${CUSTOM_RULES}"`);
+        }
+        return customRule.join(sep);
+    }))].sort(rule => rule.endsWith(ImageType.jpeg) ? rule.startsWith(sep) ? 1 : -1 : 0).map(rule => {
+        const [inputType, outputType] = rule.split(sep);
+        return { inputType, outputType } as CustomRule;
+    }) : [];
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool, [], 'false'));
+    if (customRules.length === 0 && followType) {
+        allowAllType = true;
+        for (const imageType of imageTypes) {
+            customRules.push({
+                inputType: imageType,
+                outputType: imageType,
+            });
+        }
+    }
     const allTo = check('ALL_TO', process.env.ALL_TO, VarType.inListOrEmpty, imageTypes, ImageType.jpeg) as ImageType;
+    if (customRules.length === 0) {
+        allowAllType = true;
+        customRules.push({ outputType: allTo });
+    }
     const pngEffort = check('PNG_EFFORT', process.env.PNG_EFFORT, VarType.inRangeOrEmpty, [0, 6], '2');
     const jpegQuality = check('JPEG_QUALITY', process.env.JPEG_QUALITY, VarType.inRangeOrEmpty, [0, 100], '75');
     const webpEffort = check('WEBP_EFFORT', process.env.WEBP_EFFORT, VarType.inRangeOrEmpty, [0, 6], '4');
@@ -95,8 +139,7 @@ export function loadConfig() {
         abortSlight,
         abortBigger,
         followPath,
-        followType,
-        allTo,
+        customRules,
         pngEffort,
         jpegQuality,
         webpEffort,
@@ -149,7 +192,8 @@ export function getImageFiles(inputDir: string, excludeDirs: string[]) {
         listeners: {
             file: (root, fileStats, next) => {
                 const filename = fileStats.name;
-                if (getFileType(filename)) {
+                const fileType = getFileType(filename);
+                if (fileType && (allowAllType || allowedTypes.includes(fileType))) {
                     const filepath = path.join(root, filename);
                     const dimensions = imageSize(filepath);
                     imageFiles.push({

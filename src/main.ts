@@ -3,7 +3,7 @@ import { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Color, ImageType, ResizePreset } from './enums';
-import { colorize, getFileType, getImageFiles, getSelector, loadConfig, log, sleep } from './utils';
+import { colorize, getFileType, getImageFiles, getSelector, getTypeExtname, loadConfig, log, sleep } from './utils';
 import * as AsyncLock from 'async-lock';
 import { ImageFile } from './d';
 
@@ -21,25 +21,17 @@ async function selectImage(page: Page, file: ImageFile) {
     await fileChooser.accept([file.path]);
 }
 
-async function setOptions(page: Page, file: ImageFile) {
+async function setOptions(page: Page, file: ImageFile, outputType: ImageType) {
     log(colorize(`Setting options for ${file.path}`, Color.cyan));
-    let selectType = ImageType.jpeg;
-    if (config.followType) {
-        const fileType = getFileType(file.path)!;
-        if (fileType !== ImageType.jpeg) {
-            selectType = fileType;
-            await page.select(selector.typeSelect, fileType);
-        }
-    } else if (config.allTo !== ImageType.jpeg) {
-        selectType = config.allTo;
-        await page.select(selector.typeSelect, config.allTo);
+    if (outputType !== ImageType.jpeg) {
+        await page.select(selector.typeSelect, outputType);
     }
     const changeInput = await page.evaluateHandle(() => (inputSelector: string, value: string) => {
         const input = document.querySelector<HTMLInputElement>(inputSelector)!;
         input.value = value;
         input.dispatchEvent(new Event('input'));
     });
-    switch (selectType) {
+    switch (outputType) {
         case ImageType.png:
             if (config.pngEffort !== '2') {
                 await page.evaluateHandle((changeRangeInput, pngEffortInput, pngEffort) => {
@@ -81,9 +73,9 @@ async function setOptions(page: Page, file: ImageFile) {
     }
 }
 
-async function compressImage(page: Page, file: ImageFile) {
+async function compressImage(page: Page, file: ImageFile, outputType: ImageType) {
     log(colorize(`Compressing ${file.path}`, Color.blue));
-    await page.waitForSelector(selector.downloadLink, {
+    await page.waitForSelector(`${selector.downloadLink}[download$=".${getTypeExtname(outputType)}"]`, {
         timeout: 0,
     });
     await page.waitForSelector(selector.loadingSpinner, {
@@ -153,9 +145,23 @@ async function squash(browser: Browser, file: ImageFile, outputDir: string) {
     const page = await browser.newPage();
     await page.goto(config.host);
     await selectImage(page, file);
-    await setOptions(page, file);
-    await compressImage(page, file);
-    await writeImage(browser, page, file, outputDir);
+    const compress = async (outputType: ImageType) => {
+        await setOptions(page, file, outputType);
+        await compressImage(page, file, outputType);
+        await writeImage(browser, page, file, outputDir);
+    };
+    let compressed = false;
+    const fileType = getFileType(file.path)!;
+    for (const customRule of config.customRules) {
+        if (customRule.inputType) {
+            if (customRule.inputType === fileType) {
+                await compress(customRule.outputType);
+                compressed = true;
+            }
+        } else if (!compressed) {
+            await compress(customRule.outputType);
+        }
+    }
     await page.close();
     pageCount -= 1;
 }
