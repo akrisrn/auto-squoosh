@@ -174,6 +174,18 @@ export function getImageFiles(inputDir: string, excludeDirs: string[]) {
     return imageFiles;
 }
 
+export function getFileType(filename: string) {
+    switch (path.extname(filename).substr(1)) {
+        case 'png':
+            return ImageType.png;
+        case 'jpg':
+        case 'jpeg':
+            return ImageType.jpeg;
+        case 'webp':
+            return ImageType.webp;
+    }
+}
+
 export function colorize(msg: string, color: Color) {
     return `\x1B[${color}m${msg}\x1B[0m`;
 }
