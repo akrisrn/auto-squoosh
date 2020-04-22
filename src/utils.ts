@@ -74,9 +74,9 @@ export function loadConfig() {
     const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
     const excludeDirs = check('EXCLUDE_DIRS', process.env.EXCLUDE_DIRS, VarType.isList, [], '.git,node_modules').split(',');
     const maxParallel = parseInt(check('MAX_PARALLEL', process.env.MAX_PARALLEL, VarType.inRangeOrEmpty, [1, 10], '5'), 10);
-    const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool, [], 'false'));
     const abortSlight = Boolean(check('ABORT_SLIGHT', process.env.ABORT_SLIGHT, VarType.isBool, [], 'false'));
     const abortBigger = Boolean(check('ABORT_BIGGER', process.env.ABORT_BIGGER, VarType.isBool, [], 'false'));
+    const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool, [], 'false'));
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool, [], 'true'));
     const CUSTOM_RULES = 'CUSTOM_RULES';
     const customRulesStr = check(CUSTOM_RULES, process.env.CUSTOM_RULES, VarType.isList);
@@ -135,9 +135,9 @@ export function loadConfig() {
         outputDir,
         excludeDirs,
         maxParallel,
-        overwrite,
         abortSlight,
         abortBigger,
+        overwrite,
         followPath,
         customRules,
         pngEffort,

@@ -95,6 +95,10 @@ async function writeImage(browser: Browser, page: Page, file: ImageFile, outputD
             saving: span.innerText,
         };
     }, selector.downloadLink, selector.savingSpan);
+    if (saving === 'no change' || (saving.startsWith('slightly') && config.abortSlight) || (saving.endsWith('bigger') && config.abortBigger)) {
+        log(colorize(`Abort write ${filename} (${size} ${saving})`, Color.red));
+        return;
+    }
     if (config.followPath) {
         outputDir = path.join(outputDir, path.dirname(file.path).substr(path.join(config.inputDir).length));
     }
@@ -104,21 +108,14 @@ async function writeImage(browser: Browser, page: Page, file: ImageFile, outputD
         });
     }
     let outputPath = path.join(outputDir, filename);
-    if (fs.existsSync(outputPath)) {
-        if (config.overwrite) {
-            if (saving === 'no change' || (saving.startsWith('slightly') && config.abortSlight) || (saving.endsWith('bigger') && config.abortBigger)) {
-                log(colorize(`Abort write ${outputPath} (${size} ${saving})`, Color.red));
-                return;
-            }
-        } else {
-            const extname = path.extname(outputPath);
-            const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
-            let index = 1;
-            do {
-                outputPath = `${pathNoExt} (${index})${extname}`;
-                index += 1;
-            } while (fs.existsSync(outputPath));
-        }
+    if (fs.existsSync(outputPath) && !config.overwrite) {
+        const extname = path.extname(outputPath);
+        const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
+        let index = 1;
+        do {
+            outputPath = `${pathNoExt} (${index})${extname}`;
+            index += 1;
+        } while (fs.existsSync(outputPath));
     }
     let savingMsg = `(${size} ${saving})`;
     if (saving.endsWith('smaller')) {
