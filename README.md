@@ -20,9 +20,9 @@ yarn run start
 | OUTPUT_DIR | `''` | where the compressed image to place |
 | EXCLUDE_DIRS | `'.git,node_modules'` | directories with these keys will be skipped, split by `,` |
 | MAX_PARALLEL | `'5'` | `0 ~ 10`, the max number of Chromium pages created at a time |
+| ABORT_SLIGHT | `'false'` | new image will not be write when size change slightly if set to `'true'` |
+| ABORT_BIGGER | `'false'` | new image will not be write when size increased if set to `'true'` |
 | OVERWRITE | `'false'` | new image will replace the old one if set to `'true'` |
-| ABORT_SLIGHT | `'false'` | old image will not be overwrite when size change slightly if set to `'true'`, only available if `OVERWRITE` is set to `'true'` |
-| ABORT_BIGGER | `'false'` | old image will not be overwrite when size increased if set to `'true'`, only available if `OVERWRITE` is set to `'true'` |
 | FOLLOW_PATH | `'true'` | new image path will like the original if set to `'true'` |
 | CUSTOM_RULES | `''` | like `'png->webp,mozjpeg->webp'`, split by `,`, see more below |
 | FOLLOW_TYPE | `'false'` | new image type will same as the original if set to `'true'`, only available if `CUSTOM_RULES` is set to `''` |
