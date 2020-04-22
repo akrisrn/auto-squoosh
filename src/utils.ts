@@ -78,6 +78,7 @@ export function loadConfig() {
     const excludeDirs = check('EXCLUDE_DIRS', process.env.EXCLUDE_DIRS, VarType.isList, [], '.git,node_modules').split(',');
     const maxParallel = parseInt(check('MAX_PARALLEL', process.env.MAX_PARALLEL, VarType.inRangeOrEmpty, [1, 10], '5'), 10);
     const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool, [], 'false'));
+    const abortSlight = Boolean(check('ABORT_SLIGHT', process.env.ABORT_SLIGHT, VarType.isBool, [], 'false'));
     const abortBigger = Boolean(check('ABORT_BIGGER', process.env.ABORT_BIGGER, VarType.isBool, [], 'false'));
     const followPath = Boolean(check('FOLLOW_PATH', process.env.FOLLOW_PATH, VarType.isBool, [], 'true'));
     const followType = Boolean(check('FOLLOW_TYPE', process.env.FOLLOW_TYPE, VarType.isBool, [], 'false'));
@@ -97,6 +98,7 @@ export function loadConfig() {
         excludeDirs,
         maxParallel,
         overwrite,
+        abortSlight,
         abortBigger,
         followPath,
         followType,

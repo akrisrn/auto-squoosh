@@ -119,19 +119,21 @@ async function writeImage(page: Page, file: ImageFile, outputDir: string) {
         });
     }
     let outputPath = path.join(outputDir, filename);
-    if (config.overwrite) {
-        if (saving.endsWith('bigger') && fs.existsSync(outputPath) && config.abortBigger) {
-            log(colorize(`Abort write ${outputPath} (${size} ${saving})`, Color.red));
-            return;
+    if (fs.existsSync(outputPath)) {
+        if (config.overwrite) {
+            if (saving.startsWith('slightly') && config.abortSlight || saving.endsWith('bigger') && config.abortBigger) {
+                log(colorize(`Abort write ${outputPath} (${size} ${saving})`, Color.red));
+                return;
+            }
+        } else {
+            const extname = path.extname(outputPath);
+            const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
+            let index = 1;
+            do {
+                outputPath = `${pathNoExt} (${index})${extname}`;
+                index += 1;
+            } while (fs.existsSync(outputPath));
         }
-    } else if (fs.existsSync(outputPath)) {
-        const extname = path.extname(outputPath);
-        const pathNoExt = outputPath.substr(0, outputPath.length - extname.length);
-        let index = 1;
-        do {
-            outputPath = `${pathNoExt} (${index})${extname}`;
-            index += 1;
-        } while (fs.existsSync(outputPath));
     }
     let savingMsg = `(${size} ${saving})`;
     if (saving.endsWith('smaller')) {
