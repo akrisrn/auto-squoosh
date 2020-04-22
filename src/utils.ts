@@ -178,6 +178,17 @@ export function getFileType(filename: string) {
     }
 }
 
+export function getTypeExtname(type: ImageType) {
+    switch (type) {
+        case ImageType.png:
+            return 'png';
+        case ImageType.jpeg:
+            return 'jpg';
+        case ImageType.webp:
+            return 'webp';
+    }
+}
+
 export function colorize(msg: string, color: Color) {
     return `\x1B[${color}m${msg}\x1B[0m`;
 }
