@@ -30,7 +30,7 @@ yarn run start
 | CUSTOM_RULES | `''` | like `'png->webp,mozjpeg->webp'`, split by `,`, see more below |
 | FOLLOW_TYPE | `'false'` | new image type will same as the original if set to `'true'`, only available if `CUSTOM_RULES` is `''` |
 | ALL_TO | `'mozjpeg'` | `'png' \|\| 'mozjpeg' \|\| 'webp'`, all images will compress to that specified type, only available if `CUSTOM_RULES` is `''` and `FOLLOW_TYPE` is `'false'` |
-| PNG_EFFORT | `'2'` | `0 ~ 6`, which increase while compress slower, and new image will be smaller |
+| PNG_EFFORT | `'2'` | `0 ~ 3`, which increase while compress slower, and new image will be smaller |
 | JPEG_QUALITY | `'75'` | `0 ~ 100`, which increase while new image quality will be batter, it may increase the image size as well |
 | WEBP_EFFORT | `'4'` | `0 ~ 6`, which increase while compress slower, and new image will be smaller |
 | WEBP_QUALITY | `'75'` | `0 ~ 100`, which increase while new image quality will be batter, it may increase the image size as well |
