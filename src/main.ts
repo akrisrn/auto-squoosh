@@ -111,6 +111,10 @@ async function writeImage(browser: Browser, page: Page, file: ImageFile, outputD
         });
     }
     let outputPath = path.join(outputDir, filename);
+    if (config.suffix) {
+        const index = filename.lastIndexOf('.');
+        outputPath = path.join(outputDir, filename.substring(0, index) + config.suffix + filename.substring(index));
+    }
     if (fs.existsSync(outputPath)) {
         if (!config.overwrite) {
             const extname = path.extname(outputPath);

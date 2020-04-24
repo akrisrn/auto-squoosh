@@ -76,6 +76,7 @@ export function loadConfig() {
     const maxParallel = parseInt(check('MAX_PARALLEL', process.env.MAX_PARALLEL, VarType.inRangeOrEmpty, [1, 10], '5'), 10);
     const abortSlight = Boolean(check('ABORT_SLIGHT', process.env.ABORT_SLIGHT, VarType.isBool, [], 'false'));
     const abortBigger = Boolean(check('ABORT_BIGGER', process.env.ABORT_BIGGER, VarType.isBool, [], 'false'));
+    const suffix = check('SUFFIX', process.env.SUFFIX, VarType.whatever);
     const overwrite = Boolean(check('OVERWRITE', process.env.OVERWRITE, VarType.isBool, [], 'false'));
     const furtherAbort = Boolean(check('FURTHER_ABORT', process.env.FURTHER_ABORT, VarType.isBool, [], 'false'));
     const offsetSize = parseInt(check('OFFSET_SIZE', process.env.OFFSET_SIZE, VarType.inRangeOrEmpty, [1, 100], '1'), 10);
@@ -139,6 +140,7 @@ export function loadConfig() {
         maxParallel,
         abortSlight,
         abortBigger,
+        suffix,
         overwrite,
         furtherAbort,
         offsetSize,
