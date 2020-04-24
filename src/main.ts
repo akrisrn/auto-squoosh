@@ -59,16 +59,24 @@ async function setOptions(page: Page, file: ImageFile, outputType: ImageType) {
             }
             break;
     }
+    const clickResizeLabel = async () => {
+        const checked = await page.evaluate(resizeLabel => {
+            return document.querySelector<HTMLInputElement>(`${resizeLabel} input`)!.checked;
+        }, selector.resizeLabel);
+        if (!checked) {
+            await page.click(selector.resizeLabel);
+        }
+    };
     if (config.resizeWidth) {
         const width = parseInt(config.resizeWidth, 10);
         if (width !== file.width && (config.scaleUp || width < file.width)) {
-            await page.click(selector.resizeLabel);
+            await clickResizeLabel();
             await page.evaluateHandle((changeWidthInput, resizeWidthInput, resizeWidth) => {
                 changeWidthInput(resizeWidthInput, resizeWidth);
             }, changeInput, selector.resizeWidthInput, config.resizeWidth);
         }
     } else if (config.resizePreset !== ResizePreset['100%']) {
-        await page.click(selector.resizeLabel);
+        await clickResizeLabel();
         await page.select(selector.resizePresetSelect, config.resizePreset);
     }
 }
