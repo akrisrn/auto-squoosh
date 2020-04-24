@@ -22,6 +22,7 @@ yarn run start
 | MAX_PARALLEL | `'5'` | `0 ~ 10`, the max number of Chromium pages created at a time |
 | ABORT_SLIGHT | `'false'` | new image will not be write when size change slightly if set to `'true'` |
 | ABORT_BIGGER | `'false'` | new image will not be write when size increased if set to `'true'` |
+| SUFFIX | `''` | add to the end of new image filename but ahead of extname |
 | OVERWRITE | `'false'` | new image will replace the old one if set to `'true'` |
 | FURTHER_ABORT | `'false'` | new image will not be write when size increased or decreased less then `OFFSET_SIZE` if set to `'true'`, only available if `OVERWRITE` is `'true'` |
 | OFFSET_SIZE | `'1'` | `1 ~ 100`, `kb`, only available if `FURTHER_ABORT` is `'true'` |
