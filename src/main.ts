@@ -66,6 +66,7 @@ async function setOptions(page: Page, file: ImageFile, outputType: ImageType) {
         if (!checked) {
             await page.click(selector.resizeLabel);
         }
+        await sleep(100);
     };
     if (config.resizeWidth) {
         const width = parseInt(config.resizeWidth, 10);
