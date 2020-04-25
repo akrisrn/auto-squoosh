@@ -19,6 +19,7 @@ yarn run start
 | INPUT_DIR | `''` | where contain the image to compress |
 | OUTPUT_DIR | `''` | where the compressed image to place |
 | EXCLUDE_DIRS | `'.git,node_modules'` | directories with these keys will be skipped, split by `,` |
+| EXCLUDE_FILES | `''` | files which match these regular expressions will be skipped, split by `,` |
 | MAX_PARALLEL | `'5'` | `0 ~ 10`, the max number of Chromium pages created at a time |
 | ABORT_SLIGHT | `'false'` | new image will not be write when size change slightly if set to `'true'` |
 | ABORT_BIGGER | `'false'` | new image will not be write when size increased if set to `'true'` |
