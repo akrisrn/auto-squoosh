@@ -73,6 +73,8 @@ export function loadConfig() {
     const inputDir = check('INPUT_DIR', process.env.INPUT_DIR, VarType.notEmpty);
     const outputDir = check('OUTPUT_DIR', process.env.OUTPUT_DIR, VarType.notEmpty);
     const excludeDirs = check('EXCLUDE_DIRS', process.env.EXCLUDE_DIRS, VarType.isList, [], '.git,node_modules').split(',');
+    const excludeFilesStr = check('EXCLUDE_FILES', process.env.EXCLUDE_FILES, VarType.isList);
+    const excludeFiles = excludeFilesStr ? excludeFilesStr.split(',') : [];
     const maxParallel = parseInt(check('MAX_PARALLEL', process.env.MAX_PARALLEL, VarType.inRangeOrEmpty, [1, 10], '5'), 10);
     const abortSlight = Boolean(check('ABORT_SLIGHT', process.env.ABORT_SLIGHT, VarType.isBool, [], 'false'));
     const abortBigger = Boolean(check('ABORT_BIGGER', process.env.ABORT_BIGGER, VarType.isBool, [], 'false'));
@@ -137,6 +139,7 @@ export function loadConfig() {
         inputDir,
         outputDir,
         excludeDirs,
+        excludeFiles,
         maxParallel,
         abortSlight,
         abortBigger,
@@ -192,21 +195,31 @@ export function getSelector() {
     };
 }
 
-export function getImageFiles(inputDir: string, excludeDirs: string[]) {
+export function getImageFiles(inputDir: string, excludeDirs: string[], excludeFiles: string[]) {
     const imageFiles: ImageFile[] = [];
     walk.walkSync(inputDir, {
         listeners: {
             file: (root, fileStats, next) => {
                 const filename = fileStats.name;
-                const fileType = getFileType(filename);
-                if (fileType && (allowAllType || allowedTypes.includes(fileType))) {
-                    const filepath = path.join(root, filename);
-                    const dimensions = imageSize(filepath);
-                    imageFiles.push({
-                        path: filepath,
-                        width: dimensions.width!,
-                        height: dimensions.height!,
-                    });
+                let isExclude = false;
+                for (const excludeFile of excludeFiles) {
+                    const regexp = new RegExp(excludeFile);
+                    if (regexp.test(filename)) {
+                        isExclude = true;
+                        break;
+                    }
+                }
+                if (!isExclude) {
+                    const fileType = getFileType(filename);
+                    if (fileType && (allowAllType || allowedTypes.includes(fileType))) {
+                        const filepath = path.join(root, filename);
+                        const dimensions = imageSize(filepath);
+                        imageFiles.push({
+                            path: filepath,
+                            width: dimensions.width!,
+                            height: dimensions.height!,
+                        });
+                    }
                 }
                 next();
             },
