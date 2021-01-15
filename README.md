@@ -1,3 +1,7 @@
+Deprecated.
+
+see https://github.com/GoogleChromeLabs/squoosh/tree/dev/cli
+
 # Automatic Squoosh
 
 - Copy `.env` to `.env.local`
